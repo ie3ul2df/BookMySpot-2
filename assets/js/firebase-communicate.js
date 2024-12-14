@@ -11,10 +11,8 @@ import {
   serverTimestamp,
 } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-firestore.js";
 
-// Registration logic (as explained earlier)
-
 //---------------------------- Function to handle login ----------------------------
-export async function handleLoginForm(e) {
+async function handleLoginForm(e) {
   e.preventDefault();
   const email = e.target.querySelector('input[name="email"]').value;
   const password = e.target.querySelector('input[name="password"]').value;
@@ -35,7 +33,7 @@ export async function handleLoginForm(e) {
 }
 
 //---------------------------- Function to handle registration ----------------------------
-export async function handleRegisterForm(e) {
+async function handleRegisterForm(e) {
   e.preventDefault();
 
   // Get form values
@@ -74,7 +72,7 @@ export async function handleRegisterForm(e) {
 
     console.log("User registered successfully:", user);
     alert("Registration successful! Please log in.");
-    // Switch to the login form (reuse your existing form toggle function)
+    // Switch to the login form
     document.querySelector("#show-login-form").click();
   } catch (error) {
     console.error("Registration error:", error.message);
@@ -83,7 +81,7 @@ export async function handleRegisterForm(e) {
 }
 
 //---------------------------- Function to handle forgot password ----------------------------
-export async function handleForgotPasswordForm(e) {
+async function handleForgotPasswordForm(e) {
   e.preventDefault();
   const email = e.target.querySelector('input[name="email"]').value;
 
@@ -91,10 +89,31 @@ export async function handleForgotPasswordForm(e) {
     await sendPasswordResetEmail(auth, email);
     console.log("Password reset email sent to:", email);
     alert("Password reset email sent. Check your inbox.");
-    // Switch to login form (you already have a function for toggling forms)
+    // Switch to login form
     document.querySelector("#show-login-form").click();
   } catch (error) {
     console.error("Forgot password error:", error.message);
     alert(error.message);
   }
 }
+
+//---------------------------- Attach Event Listeners ----------------------------
+document.addEventListener("DOMContentLoaded", () => {
+  // Login Form
+  const loginForm = document.querySelector("#loginForm");
+  if (loginForm) {
+    loginForm.addEventListener("submit", handleLoginForm);
+  }
+
+  // Register Form
+  const registerForm = document.querySelector("#registerForm");
+  if (registerForm) {
+    registerForm.addEventListener("submit", handleRegisterForm);
+  }
+
+  // Forgot Password Form
+  const forgotPasswordForm = document.querySelector("#forgotPasswordForm");
+  if (forgotPasswordForm) {
+    forgotPasswordForm.addEventListener("submit", handleForgotPasswordForm);
+  }
+});
