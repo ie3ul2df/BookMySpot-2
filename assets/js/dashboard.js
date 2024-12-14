@@ -19,8 +19,7 @@ const storage = getStorage();
 const userDetailsForm = document.getElementById("user-details-form");
 const profileImage = document.getElementById("profile-image");
 const profileImageInput = document.getElementById("profile-image-input");
-const uploadImageBtn = document.getElementById("upload-image-btn");
-const logoutButton = document.getElementById("logout");
+// const logoutButton = document.getElementById("logout");
 
 //--------------------- Gravatar for user profile ---------------------
 function getGravatarUrl(email) {
@@ -84,67 +83,17 @@ if (userDetailsForm) {
   console.error("User details form not found!");
 }
 
-//--------------------- Handle Profile Image Upload ---------------------
-if (uploadImageBtn) {
-  uploadImageBtn.addEventListener("click", () => {
-    profileImageInput.click();
-  });
-} else {
-  console.error("Upload Image Button not found!");
-}
-
-if (profileImageInput) {
-  profileImageInput.addEventListener("change", async () => {
-    const file = profileImageInput.files[0];
-    if (!file) {
-      console.log("No file selected");
-      return;
-    }
-
-    console.log("Selected file:", file);
-
-    try {
-      const user = auth.currentUser;
-      console.log("Current user:", user);
-
-      const storageRef = ref(storage, `profile-images/${user.uid}`);
-      console.log("Storage reference created");
-
-      const uploadTask = await uploadBytes(storageRef, file);
-      console.log("File uploaded:", uploadTask);
-
-      const imageUrl = await getDownloadURL(uploadTask.ref);
-      console.log("Image URL:", imageUrl);
-
-      // Update the profile image on the page
-      profileImage.src = imageUrl;
-
-      // Save the image URL in Firestore
-      const userDocRef = doc(db, "users", user.uid);
-      await updateDoc(userDocRef, { profileImageUrl: imageUrl });
-      console.log("Image URL saved in Firestore");
-
-      alert("Profile image updated successfully!");
-    } catch (error) {
-      console.error("Error uploading profile image:", error.message);
-      alert("Error uploading profile image. Please try again.");
-    }
-  });
-} else {
-  console.error("Profile Image Input not found!");
-}
-
 //--------------------- Handle User Logout ---------------------
-if (logoutButton) {
-  logoutButton.addEventListener("click", async () => {
-    try {
-      await signOut(auth);
-      alert("Logged out successfully!");
-      window.location.href = "login_register.html";
-    } catch (error) {
-      console.error("Logout error:", error.message);
-    }
-  });
-} else {
-  console.error("Logout button not found!");
-}
+// if (logoutButton) {
+//   logoutButton.addEventListener("click", async () => {
+//     try {
+//       await signOut(auth);
+//       alert("Logged out successfully!");
+//       window.location.href = "login_register.html";
+//     } catch (error) {
+//       console.error("Logout error:", error.message);
+//     }
+//   });
+// } else {
+//   console.error("Logout button not found!");
+// }
