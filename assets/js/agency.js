@@ -1,3 +1,6 @@
+import { auth } from "./firebase-config.js";
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-auth.js";
+
 //_____________________________________ Navbar Active Section _____________________________________//
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -111,5 +114,24 @@ document.addEventListener("DOMContentLoaded", function () {
       // Add active class to clicked dropdown item
       this.classList.add("active");
     });
+  });
+});
+
+//-------------- change login / Register link on the navbar to Dashboard --------------
+document.addEventListener("DOMContentLoaded", () => {
+  const authLink = document.getElementById("auth-link");
+
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      // User is logged in: Change link to Dashboard
+      authLink.href = "dashboard.html";
+      authLink.textContent = "Dashboard";
+      authLink.setAttribute("aria-label", "Go to Dashboard");
+    } else {
+      // User is not logged in: Keep Login/Register
+      authLink.href = "login_register.html";
+      authLink.textContent = "Login / Register";
+      authLink.setAttribute("aria-label", "Login or Register");
+    }
   });
 });
