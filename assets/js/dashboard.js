@@ -22,47 +22,69 @@ const profileImageInput = document.getElementById("profile-image-input");
 const uploadImageBtn = document.getElementById("upload-image-btn");
 const logoutButton = document.getElementById("logout");
 
+//--------------------- Gravatar for user profile ---------------------
+function getGravatarUrl(email) {
+  const md5 = CryptoJS.MD5(email.trim().toLowerCase());
+  return `https://www.gravatar.com/avatar/${md5}?s=150&d=identicon`;
+}
+
+//--------------------- Handle User Authentication State ---------------------
 onAuthStateChanged(auth, async (user) => {
   if (user) {
-    const userDocRef = doc(db, "users", user.uid);
-    const userDoc = await getDoc(userDocRef);
+    try {
+      const userDocRef = doc(db, "users", user.uid);
+      const userDoc = await getDoc(userDocRef);
 
-    if (userDoc.exists()) {
-      const data = userDoc.data();
-      document.getElementById("email").value = data.email || "";
-      document.getElementById("address").value = data.address || "";
-      document.getElementById("postcode").value = data.postcode || "";
-      document.getElementById("phone").value = data.phone || "";
+      if (userDoc.exists()) {
+        const data = userDoc.data();
+        const email = data.email || "";
 
-      if (data.profileImageUrl) {
-        profileImage.src = data.profileImageUrl;
+        // Use Gravatar for the profile image
+        const gravatarUrl = getGravatarUrl(email);
+        profileImage.src = gravatarUrl;
+
+        // Populate user details in the form
+        document.getElementById("email").value = email;
+        document.getElementById("address").value = data.address || "";
+        document.getElementById("postcode").value = data.postcode || "";
+        document.getElementById("phone").value = data.phone || "";
       }
+    } catch (error) {
+      console.error("Error fetching user data:", error);
     }
   } else {
+    // Redirect to login if user is not authenticated
     window.location.href = "login_register.html";
   }
 });
 
-userDetailsForm.addEventListener("submit", async (e) => {
-  e.preventDefault();
+//--------------------- Handle Profile Form Submission ---------------------
+if (userDetailsForm) {
+  userDetailsForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
 
-  const address = document.getElementById("address").value;
-  const postcode = document.getElementById("postcode").value;
-  const phone = document.getElementById("phone").value;
+    const address = document.getElementById("address").value;
+    const postcode = document.getElementById("postcode").value;
+    const phone = document.getElementById("phone").value;
 
-  try {
-    const user = auth.currentUser;
-    const userDocRef = doc(db, "users", user.uid);
+    try {
+      const user = auth.currentUser;
+      const userDocRef = doc(db, "users", user.uid);
 
-    await updateDoc(userDocRef, { address, postcode, phone });
+      // Update Firestore with new user details
+      await updateDoc(userDocRef, { address, postcode, phone });
 
-    alert("Profile updated successfully!");
-  } catch (error) {
-    console.error("Error updating profile:", error);
-    alert("Error updating profile. Please try again.");
-  }
-});
+      alert("Profile updated successfully!");
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      alert("Error updating profile. Please try again.");
+    }
+  });
+} else {
+  console.error("User details form not found!");
+}
 
+//--------------------- Handle Profile Image Upload ---------------------
 if (uploadImageBtn) {
   uploadImageBtn.addEventListener("click", () => {
     profileImageInput.click();
@@ -70,6 +92,7 @@ if (uploadImageBtn) {
 } else {
   console.error("Upload Image Button not found!");
 }
+
 if (profileImageInput) {
   profileImageInput.addEventListener("change", async () => {
     const file = profileImageInput.files[0];
@@ -93,8 +116,10 @@ if (profileImageInput) {
       const imageUrl = await getDownloadURL(uploadTask.ref);
       console.log("Image URL:", imageUrl);
 
+      // Update the profile image on the page
       profileImage.src = imageUrl;
 
+      // Save the image URL in Firestore
       const userDocRef = doc(db, "users", user.uid);
       await updateDoc(userDocRef, { profileImageUrl: imageUrl });
       console.log("Image URL saved in Firestore");
@@ -109,12 +134,17 @@ if (profileImageInput) {
   console.error("Profile Image Input not found!");
 }
 
-// logoutButton.addEventListener("click", async () => {
-//   try {
-//     await signOut(auth);
-//     alert("Logged out successfully!");
-//     window.location.href = "login_register.html";
-//   } catch (error) {
-//     console.error("Logout error:", error.message);
-//   }
-// });
+//--------------------- Handle User Logout ---------------------
+if (logoutButton) {
+  logoutButton.addEventListener("click", async () => {
+    try {
+      await signOut(auth);
+      alert("Logged out successfully!");
+      window.location.href = "login_register.html";
+    } catch (error) {
+      console.error("Logout error:", error.message);
+    }
+  });
+} else {
+  console.error("Logout button not found!");
+}
