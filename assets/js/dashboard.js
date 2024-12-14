@@ -69,22 +69,35 @@ uploadImageBtn.addEventListener("click", () => {
 
 profileImageInput.addEventListener("change", async () => {
   const file = profileImageInput.files[0];
-  if (!file) return;
+  if (!file) {
+    console.log("No file selected");
+    return;
+  }
+
+  console.log("Selected file:", file);
 
   try {
     const user = auth.currentUser;
-    const storageRef = ref(storage, `profile-images/${user.uid}`);
-    await uploadBytes(storageRef, file);
+    console.log("Current user:", user);
 
-    const imageUrl = await getDownloadURL(storageRef);
+    const storageRef = ref(storage, `profile-images/${user.uid}`);
+    console.log("Storage reference created");
+
+    const uploadTask = await uploadBytes(storageRef, file);
+    console.log("File uploaded:", uploadTask);
+
+    const imageUrl = await getDownloadURL(uploadTask.ref);
+    console.log("Image URL:", imageUrl);
+
     profileImage.src = imageUrl;
 
     const userDocRef = doc(db, "users", user.uid);
     await updateDoc(userDocRef, { profileImageUrl: imageUrl });
+    console.log("Image URL saved in Firestore");
 
     alert("Profile image updated successfully!");
   } catch (error) {
-    console.error("Error uploading profile image:", error);
+    console.error("Error uploading profile image:", error.message);
     alert("Error uploading profile image. Please try again.");
   }
 });
