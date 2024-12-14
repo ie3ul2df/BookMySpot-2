@@ -21,27 +21,54 @@
     <link rel="stylesheet" href="assets/css/style.css">
 </head>
 
-<body class="d-flex flex-column min-vh-100">
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container">
-            <a class="navbar-brand" href="#">BookMySpot</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link active" href="#">Dashboard</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#" id="logout">Logout</a>
-                    </li>
-                </ul>
+<body id="dashboard-body" data-bs-spy="scroll" data-bs-target="#mainNav" data-bs-offset="54"
+    class="d-flex flex-column min-vh-100">
+
+    <header>
+        <!-- //_____________________________________ Navbar _____________________________________// -->
+        <nav class="navbar navbar-expand-lg fixed-top bg-dark navbar-dark" id="mainNav" aria-label="Main Navigation">
+            <div class="container">
+                <a class="navbar-brand" href="index.html" aria-label="Go to Home Page">
+                    <img src="assets/img/logo2.png" alt="BookMySpot site logo" class="site-logo-style">
+                </a>
+                <button data-bs-toggle="collapse" data-bs-target="#navbarResponsive" class="navbar-toggler"
+                    type="button" aria-controls="navbarResponsive" aria-expanded="false"
+                    aria-label="Toggle navigation menu">
+                    <i class="fa fa-bars"></i>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarResponsive">
+                    <ul class="navbar-nav ms-auto text-uppercase">
+                        <!-- Home dropdown -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="index.html" id="homeDropdown" role="button"
+                                aria-expanded="false" aria-haspopup="true" aria-label="Home Section Menu">
+                                Home
+                            </a>
+                            <ul class="dropdown-menu bg-dark" aria-labelledby="homeDropdown">
+                                <li><a class="dropdown-item text-light" href="index.html#features"
+                                        aria-label="Features Section">Features</a></li>
+                                <li><a class="dropdown-item text-light" href="index.html#how-to-use"
+                                        aria-label="How It Works Section">How It Works?</a></li>
+                                <li><a class="dropdown-item text-light" href="index.html#testimonials"
+                                        aria-label="Testimonials Section">Testimonials</a></li>
+                                <li><a class="dropdown-item text-light" href="index.html#team"
+                                        aria-label="Team Section">Team</a></li>
+                                <li><a class="dropdown-item text-light" href="index.html#contact"
+                                        aria-label="Contact Section">Contact</a></li>
+                            </ul>
+                        </li>
+                        <!-- Other nav items -->
+                        <li class="nav-item"><a class="nav-link" href="about-us.html"
+                                aria-label="About Us Page">About-us</a></li>
+                        <li class="nav-item"><a class="nav-link" href="privacy.html"
+                                aria-label="Privacy and Policies Page">Privacy and Policies</a></li>
+                        <li class="nav-item"><a class="nav-link" href="login_register.html"
+                                aria-label="Privacy and Policies Page">Login / Register</a></li>
+                    </ul>
+                </div>
             </div>
-        </div>
-    </nav>
+        </nav>
+    </header>
 
     <!-- Main Content -->
     <main class="container my-5">
