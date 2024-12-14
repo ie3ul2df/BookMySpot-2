@@ -11,7 +11,7 @@ import {
   serverTimestamp,
 } from "https://www.gstatic.com/firebasejs/9.19.1/firebase-firestore.js";
 
-// Function to handle login
+//---------------------------- Function to handle login ----------------------------
 export async function handleLoginForm(e) {
   e.preventDefault();
   const email = e.target.querySelector('input[name="email"]').value;
@@ -32,14 +32,27 @@ export async function handleLoginForm(e) {
   }
 }
 
-// Function to handle registration
+//---------------------------- Function to handle registration ----------------------------
 export async function handleRegisterForm(e) {
   e.preventDefault();
+
+  // Get form values
   const email = e.target.querySelector('input[name="email"]').value;
   const password = e.target.querySelector('input[name="password"]').value;
   const address = e.target.querySelector('input[name="address"]').value;
+  const address2 = e.target.querySelector('input[name="address2"]').value || ""; // Optional
+  const city = e.target.querySelector('input[name="city"]').value;
+  const zip = e.target.querySelector('input[name="zip"]').value;
+
+  // Validate checkbox
+  const termsAccepted = e.target.querySelector("#gridCheck").checked;
+  if (!termsAccepted) {
+    alert("You must agree to the terms and conditions to register.");
+    return;
+  }
 
   try {
+    // Register the user with Firebase Authentication
     const userCredential = await createUserWithEmailAndPassword(
       auth,
       email,
@@ -47,16 +60,19 @@ export async function handleRegisterForm(e) {
     );
     const user = userCredential.user;
 
-    // Save additional user details to Firestore
+    // Save user details in Firestore
     await setDoc(doc(db, "users", user.uid), {
       email,
       address,
+      address2,
+      city,
+      zip,
       createdAt: serverTimestamp(),
     });
 
     console.log("User registered successfully:", user);
     alert("Registration successful! Please log in.");
-    // Switch to login form (you already have a function for toggling forms)
+    // Switch to the login form (reuse your existing form toggle function)
     document.querySelector("#show-login-form").click();
   } catch (error) {
     console.error("Registration error:", error.message);
@@ -64,7 +80,7 @@ export async function handleRegisterForm(e) {
   }
 }
 
-// Function to handle forgot password
+//---------------------------- Function to handle forgot password ----------------------------
 export async function handleForgotPasswordForm(e) {
   e.preventDefault();
   const email = e.target.querySelector('input[name="email"]').value;
