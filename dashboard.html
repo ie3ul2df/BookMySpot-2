@@ -71,23 +71,31 @@
     </header>
 
     <!-- Main Content -->
-    <main class="container my-5">
+    <main class="container my-5 ">
         <div class="row aj-mt-150">
             <!-- Profile Section -->
             <div class="col-md-4">
+                <p class="text-center fw-bold fs-6 text-muted">Change Your Profile <br>Image on Gravatar</p>
                 <div class="text-center">
                     <img id="profile-image" src="assets/img/default-profile.png" alt="Profile Image"
                         class="img-thumbnail" style="width: 150px; height: 150px; object-fit: cover;">
                 </div>
+                <div class="text-center mt-3">
+                    <a href="https://gravatar.com/profile/avatars" target="_blank" rel="noopener noreferrer"
+                        class="btn btn-success" aria-label="Change your profile image on Gravatar">
+                        Change Image
+                    </a>
+
+                </div>
             </div>
 
             <!-- User Details Form -->
-            <div class="col-md-8">
+            <div class="col-md-8    ">
                 <h2>Edit Profile</h2>
                 <form id="user-details-form">
                     <div class="mb-3">
                         <label for="email" class="form-label">Email</label>
-                        <input type="email" id="email" class="form-control" readonly>
+                        <input type="email" id="email" class="form-control" readonly disabled>
                     </div>
                     <div class="mb-3">
                         <label for="address" class="form-label">Address</label>
