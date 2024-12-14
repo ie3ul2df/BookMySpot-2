@@ -62,8 +62,12 @@
                                 aria-label="About Us Page">About-us</a></li>
                         <li class="nav-item"><a class="nav-link" href="privacy.html"
                                 aria-label="Privacy and Policies Page">Privacy and Policies</a></li>
-                        <li class="nav-item"><a class="nav-link" href="login_register.html"
+                        <li class="nav-item" id="auth-link"><a class="nav-link" href="login_register.html"
                                 aria-label="Privacy and Policies Page">Login / Register</a></li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="logout" href="#" aria-label="Log out">Logout</a>
+                        </li>
+
                     </ul>
                 </div>
             </div>
@@ -280,6 +284,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.19.1/firebase-firestore.js"></script>
     <script type="module" src="assets/js/firebase-config.js"></script>
     <script type="module" src="assets/js/firebase-communicate.js"></script>
+    <script type="module" src="assets/js/user-condition.js"></script>
 
 </body>
 
