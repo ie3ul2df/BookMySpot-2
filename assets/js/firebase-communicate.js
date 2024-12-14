@@ -1,15 +1,17 @@
 // Import Firebase modules and services
 import { auth, db } from "./firebase-config.js";
 import {
-  signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
   sendPasswordResetEmail,
-} from "https://www.gstatic.com/firebasejs/9.19.1/firebase-auth.js";
+} from "https://www.gstatic.com/firebasejs/11.1.0/firebase-auth.js";
 import {
   setDoc,
   doc,
   serverTimestamp,
-} from "https://www.gstatic.com/firebasejs/9.19.1/firebase-firestore.js";
+} from "https://www.gstatic.com/firebasejs/11.1.0/firebase-firestore.js";
+
+// Registration logic (as explained earlier)
 
 //---------------------------- Function to handle login ----------------------------
 export async function handleLoginForm(e) {
