@@ -63,51 +63,58 @@ userDetailsForm.addEventListener("submit", async (e) => {
   }
 });
 
-uploadImageBtn.addEventListener("click", () => {
-  profileImageInput.click();
-});
+if (uploadImageBtn) {
+  uploadImageBtn.addEventListener("click", () => {
+    profileImageInput.click();
+  });
+} else {
+  console.error("Upload Image Button not found!");
+}
+if (profileImageInput) {
+  profileImageInput.addEventListener("change", async () => {
+    const file = profileImageInput.files[0];
+    if (!file) {
+      console.log("No file selected");
+      return;
+    }
 
-profileImageInput.addEventListener("change", async () => {
-  const file = profileImageInput.files[0];
-  if (!file) {
-    console.log("No file selected");
-    return;
-  }
+    console.log("Selected file:", file);
 
-  console.log("Selected file:", file);
+    try {
+      const user = auth.currentUser;
+      console.log("Current user:", user);
 
-  try {
-    const user = auth.currentUser;
-    console.log("Current user:", user);
+      const storageRef = ref(storage, `profile-images/${user.uid}`);
+      console.log("Storage reference created");
 
-    const storageRef = ref(storage, `profile-images/${user.uid}`);
-    console.log("Storage reference created");
+      const uploadTask = await uploadBytes(storageRef, file);
+      console.log("File uploaded:", uploadTask);
 
-    const uploadTask = await uploadBytes(storageRef, file);
-    console.log("File uploaded:", uploadTask);
+      const imageUrl = await getDownloadURL(uploadTask.ref);
+      console.log("Image URL:", imageUrl);
 
-    const imageUrl = await getDownloadURL(uploadTask.ref);
-    console.log("Image URL:", imageUrl);
+      profileImage.src = imageUrl;
 
-    profileImage.src = imageUrl;
+      const userDocRef = doc(db, "users", user.uid);
+      await updateDoc(userDocRef, { profileImageUrl: imageUrl });
+      console.log("Image URL saved in Firestore");
 
-    const userDocRef = doc(db, "users", user.uid);
-    await updateDoc(userDocRef, { profileImageUrl: imageUrl });
-    console.log("Image URL saved in Firestore");
+      alert("Profile image updated successfully!");
+    } catch (error) {
+      console.error("Error uploading profile image:", error.message);
+      alert("Error uploading profile image. Please try again.");
+    }
+  });
+} else {
+  console.error("Profile Image Input not found!");
+}
 
-    alert("Profile image updated successfully!");
-  } catch (error) {
-    console.error("Error uploading profile image:", error.message);
-    alert("Error uploading profile image. Please try again.");
-  }
-});
-
-logoutButton.addEventListener("click", async () => {
-  try {
-    await signOut(auth);
-    alert("Logged out successfully!");
-    window.location.href = "login_register.html";
-  } catch (error) {
-    console.error("Logout error:", error.message);
-  }
-});
+// logoutButton.addEventListener("click", async () => {
+//   try {
+//     await signOut(auth);
+//     alert("Logged out successfully!");
+//     window.location.href = "login_register.html";
+//   } catch (error) {
+//     console.error("Logout error:", error.message);
+//   }
+// });
