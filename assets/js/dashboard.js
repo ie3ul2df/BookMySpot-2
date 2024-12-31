@@ -45,7 +45,8 @@ onAuthStateChanged(auth, async (user) => {
         // Populate user details in the form
         document.getElementById("email").value = email;
         document.getElementById("address").value = data.address || "";
-        document.getElementById("postcode").value = data.postcode || "";
+        document.getElementById("address2").value = data.address2 || "";
+        document.getElementById("zip").value = data.zip || "";
         document.getElementById("phone").value = data.phone || "";
       }
     } catch (error) {
@@ -63,7 +64,8 @@ if (userDetailsForm) {
     e.preventDefault();
 
     const address = document.getElementById("address").value;
-    const postcode = document.getElementById("postcode").value;
+    const address2 = document.getElementById("address2").value;
+    const zip = document.getElementById("zip").value;
     const phone = document.getElementById("phone").value;
 
     try {
@@ -71,7 +73,7 @@ if (userDetailsForm) {
       const userDocRef = doc(db, "users", user.uid);
 
       // Update Firestore with new user details
-      await updateDoc(userDocRef, { address, postcode, phone });
+      await updateDoc(userDocRef, { address, address2, zip, phone });
 
       alert("Profile updated successfully!");
     } catch (error) {

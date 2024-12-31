@@ -1,10 +1,7 @@
-// assets/js/firebase-config.js
-
 // Import the required Firebase modules
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-app.js";
 import { getAuth } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-auth.js";
 import { getFirestore } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-firestore.js";
-import { getStorage } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-storage.js";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -19,11 +16,7 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
 
-// Initialize Firebase Authentication and Firestore
-const auth = getAuth(app); // Authentication service
-const db = getFirestore(app); // Firestore database
-const storage = getStorage(app);
-
-// Export Firebase services for use in other files
-export { auth, db, storage };
+export { auth, db };
