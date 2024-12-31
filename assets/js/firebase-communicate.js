@@ -59,7 +59,7 @@ async function handleRegisterForm(e) {
   const zip = e.target.querySelector('input[name="zip"]').value.trim();
   const role = e.target.querySelector('input[name="role"]:checked').value;
 
-  if (!email || !password || !address || !city || !zip) {
+  if (!email || !password || !address || !city || !zip || !role) {
     alert("Please fill in all required fields.");
     return;
   }
@@ -74,6 +74,7 @@ async function handleRegisterForm(e) {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
 
+    // console.log("Saving user:", { email, address, city, zip, role });
     // Save user details in Firestore
     await setDoc(doc(db, "users", user.uid), {
       email,
@@ -82,6 +83,7 @@ async function handleRegisterForm(e) {
       city,
       zip,
       createdAt: serverTimestamp(),
+      role,
     });
 
     console.log("User registered successfully:", user);
