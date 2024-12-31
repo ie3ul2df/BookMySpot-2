@@ -23,18 +23,11 @@ function displayFormData() {
 
   // Update content with form submission details
   titleElement.textContent = `Thank You, ${name || "Guest"}!`;
-  messageElement.textContent =
-    "Your submission has been received with the following details:";
+  messageElement.textContent = "Your submission has been received with the following details:";
   detailsList.innerHTML += `
-        <li class="list-group-item"><strong>Email:</strong> ${
-          email || "No email provided"
-        }</li>
-        <li class="list-group-item"><strong>Phone:</strong> ${
-          phone || "No phone provided"
-        }</li>
-        <li class="list-group-item"><strong>Message:</strong> ${
-          message || "No message provided"
-        }</li>`;
+        <li class="list-group-item"><strong>Email:</strong> ${email || "No email provided"}</li>
+        <li class="list-group-item"><strong>Phone:</strong> ${phone || "No phone provided"}</li>
+        <li class="list-group-item"><strong>Message:</strong> ${message || "No message provided"}</li>`;
 }
 
 // Run the function after the page loads

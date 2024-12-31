@@ -13,8 +13,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
       // Special handling for Home (index.html)
       if (
-        (currentURL.includes("index.html") &&
-          linkHref.includes("index.html")) || // Matches index.html
+        (currentURL.includes("index.html") && linkHref.includes("index.html")) || // Matches index.html
         (currentURL === linkHref && linkHref.includes("#")) || // Matches sections on the same page
         (currentURL.endsWith("/") && linkHref.includes("index.html")) // Root URL (e.g., https://example.com/)
       ) {
@@ -47,20 +46,14 @@ document.addEventListener("DOMContentLoaded", function () {
       const sectionHeight = section.offsetHeight;
       const scrollPosition = window.pageYOffset;
 
-      if (
-        scrollPosition >= sectionTop &&
-        scrollPosition < sectionTop + sectionHeight
-      ) {
+      if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
         currentSection = section.getAttribute("id");
       }
     });
 
     // Update the active class for section-based links (navbar links)
     navLinks.forEach((link) => {
-      if (
-        link.getAttribute("href") &&
-        link.getAttribute("href").includes(`#${currentSection}`)
-      ) {
+      if (link.getAttribute("href") && link.getAttribute("href").includes(`#${currentSection}`)) {
         link.classList.add("active");
       } else {
         link.classList.remove("active");
@@ -69,10 +62,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Update the active class for section-based links (dropdown items)
     dropdownItems.forEach((item) => {
-      if (
-        item.getAttribute("href") &&
-        item.getAttribute("href").includes(`#${currentSection}`)
-      ) {
+      if (item.getAttribute("href") && item.getAttribute("href").includes(`#${currentSection}`)) {
         item.classList.add("active");
       } else {
         item.classList.remove("active");

@@ -1,15 +1,7 @@
 // Import Firebase modules and services
 import { auth, db } from "./firebase-config.js";
-import {
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  sendPasswordResetEmail,
-} from "https://www.gstatic.com/firebasejs/11.1.0/firebase-auth.js";
-import {
-  setDoc,
-  doc,
-  serverTimestamp,
-} from "https://www.gstatic.com/firebasejs/11.1.0/firebase-firestore.js";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-auth.js";
+import { setDoc, doc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-firestore.js";
 
 //---------------------------- Utility Functions ----------------------------
 
@@ -26,10 +18,7 @@ function getErrorMessage(errorCode) {
     "auth/wrong-password": "Incorrect password.",
     "auth/weak-password": "Password must be at least 6 characters.",
   };
-  return (
-    errorMessages[errorCode] ||
-    "An unexpected error occurred. Please try again."
-  );
+  return errorMessages[errorCode] || "An unexpected error occurred. Please try again.";
 }
 
 //---------------------------- Function to handle login ----------------------------
@@ -46,11 +35,7 @@ async function handleLoginForm(e) {
   }
 
   try {
-    const userCredential = await signInWithEmailAndPassword(
-      auth,
-      email,
-      password
-    );
+    const userCredential = await signInWithEmailAndPassword(auth, email, password);
     console.log("User logged in:", userCredential.user);
     alert("Login successful!");
     window.location.href = "dashboard.html"; // Redirect to dashboard
@@ -69,10 +54,10 @@ async function handleRegisterForm(e) {
   const email = e.target.querySelector('input[name="email"]').value.trim();
   const password = e.target.querySelector('input[name="password"]').value;
   const address = e.target.querySelector('input[name="address"]').value.trim();
-  const address2 =
-    e.target.querySelector('input[name="address2"]').value.trim() || "";
+  const address2 = e.target.querySelector('input[name="address2"]').value.trim() || "";
   const city = e.target.querySelector('input[name="city"]').value.trim();
   const zip = e.target.querySelector('input[name="zip"]').value.trim();
+  const role = e.target.querySelector('input[name="role"]:checked').value;
 
   if (!email || !password || !address || !city || !zip) {
     alert("Please fill in all required fields.");
@@ -86,11 +71,7 @@ async function handleRegisterForm(e) {
   }
 
   try {
-    const userCredential = await createUserWithEmailAndPassword(
-      auth,
-      email,
-      password
-    );
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
 
     // Save user details in Firestore

@@ -1,170 +1,178 @@
 <!DOCTYPE html>
 <html lang="en" data-bs-theme="light">
-
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
-    <meta name="author" content="BookMySpot Team">
-    <meta name="keywords"
-        content="BookMySpot, parking spots, rent parking, drivers, parking management, parking availability, parking map">
-    <meta name="description"
-        content="BookMySpot helps drivers find and book available parking spaces while allowing parking spot owners to rent out their spots. Easy booking, flexible management, and a seamless experience for drivers and owners alike.">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no" />
+    <meta name="author" content="BookMySpot Team" />
+    <meta name="keywords" content="BookMySpot, parking spots, rent parking, drivers, parking management, parking availability, parking map" />
+    <meta
+      name="description"
+      content="BookMySpot helps drivers find and book available parking spaces while allowing parking spot owners to rent out their spots. Easy booking, flexible management, and a seamless experience for drivers and owners alike."
+    />
 
     <title>BookMySpot | Dashboard</title>
-    <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:400,700&amp;display=swap">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Kaushan+Script&amp;display=swap">
-    <link rel="stylesheet" href="assets/fonts/fontawesome-all.min.css">
-    <link rel="stylesheet" href="assets/fonts/font-awesome.min.css">
-    <link rel="stylesheet" href="assets/fonts/fontawesome5-overrides.min.css">
-    <link rel="stylesheet" href="assets/css/bs-theme-overrides.css">
-    <link rel="stylesheet" href="assets/css/style.css">
-</head>
+    <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:400,700&amp;display=swap" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Kaushan+Script&amp;display=swap" />
+    <link rel="stylesheet" href="assets/fonts/fontawesome-all.min.css" />
+    <link rel="stylesheet" href="assets/fonts/font-awesome.min.css" />
+    <link rel="stylesheet" href="assets/fonts/fontawesome5-overrides.min.css" />
+    <link rel="stylesheet" href="assets/css/bs-theme-overrides.css" />
+    <link rel="stylesheet" href="assets/css/style.css" />
+  </head>
 
-<body id="dashboard-body" data-bs-spy="scroll" data-bs-target="#mainNav" data-bs-offset="54"
-    class="d-flex flex-column min-vh-100">
-
+  <body id="dashboard-body" data-bs-spy="scroll" data-bs-target="#mainNav" data-bs-offset="54" class="d-flex flex-column min-vh-100">
     <header>
-        <!-- //_____________________________________ Navbar _____________________________________// -->
-        <nav class="navbar navbar-expand-lg fixed-top bg-dark navbar-dark" id="mainNav" aria-label="Main Navigation">
-            <div class="container">
-                <a class="navbar-brand" href="index.html" aria-label="Go to Home Page">
-                    <img src="assets/img/logo2.png" alt="BookMySpot site logo" class="site-logo-style">
+      <!-- //_____________________________________ Navbar _____________________________________// -->
+      <nav class="navbar navbar-expand-lg fixed-top bg-dark navbar-dark" id="mainNav" aria-label="Main Navigation">
+        <div class="container">
+          <a class="navbar-brand" href="index.html" aria-label="Go to Home Page">
+            <img src="assets/img/logo2.png" alt="BookMySpot site logo" class="site-logo-style" />
+          </a>
+          <button
+            data-bs-toggle="collapse"
+            data-bs-target="#navbarResponsive"
+            class="navbar-toggler"
+            type="button"
+            aria-controls="navbarResponsive"
+            aria-expanded="false"
+            aria-label="Toggle navigation menu"
+          >
+            <i class="fa fa-bars"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarResponsive">
+            <ul class="navbar-nav ms-auto text-uppercase">
+              <!-- Home dropdown -->
+              <li class="nav-item dropdown">
+                <a
+                  class="nav-link dropdown-toggle"
+                  href="index.html"
+                  id="homeDropdown"
+                  role="button"
+                  aria-expanded="false"
+                  aria-haspopup="true"
+                  aria-label="Home Section Menu"
+                >
+                  Home
                 </a>
-                <button data-bs-toggle="collapse" data-bs-target="#navbarResponsive" class="navbar-toggler"
-                    type="button" aria-controls="navbarResponsive" aria-expanded="false"
-                    aria-label="Toggle navigation menu">
-                    <i class="fa fa-bars"></i>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarResponsive">
-                    <ul class="navbar-nav ms-auto text-uppercase">
-                        <!-- Home dropdown -->
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="index.html" id="homeDropdown" role="button"
-                                aria-expanded="false" aria-haspopup="true" aria-label="Home Section Menu">
-                                Home
-                            </a>
-                            <ul class="dropdown-menu bg-dark" aria-labelledby="homeDropdown">
-                                <li><a class="dropdown-item text-light" href="index.html#features"
-                                        aria-label="Features Section">Features</a></li>
-                                <li><a class="dropdown-item text-light" href="index.html#how-to-use"
-                                        aria-label="How It Works Section">How It Works?</a></li>
-                                <li><a class="dropdown-item text-light" href="index.html#testimonials"
-                                        aria-label="Testimonials Section">Testimonials</a></li>
-                                <li><a class="dropdown-item text-light" href="index.html#team"
-                                        aria-label="Team Section">Team</a></li>
-                                <li><a class="dropdown-item text-light" href="index.html#contact"
-                                        aria-label="Contact Section">Contact</a></li>
-                            </ul>
-                        </li>
-                        <!-- Other nav items -->
-                        <li class="nav-item"><a class="nav-link" href="about-us.html"
-                                aria-label="About Us Page">About-us</a></li>
-                        <li class="nav-item"><a class="nav-link" href="privacy.html"
-                                aria-label="Privacy and Policies Page">Privacy and Policies</a></li>
-                        <li class="nav-item" id="auth-link"><a class="nav-link" href="login_register.html"
-                                aria-label="Privacy and Policies Page">Login / Register</a></li>
-                        <li class="nav-item">
-                            <a class="nav-link" id="logout" href="#" aria-label="Log out">Logout</a>
-                        </li>
-
-                    </ul>
-                </div>
-            </div>
-        </nav>
+                <ul class="dropdown-menu bg-dark" aria-labelledby="homeDropdown">
+                  <li><a class="dropdown-item text-light" href="index.html#features" aria-label="Features Section">Features</a></li>
+                  <li><a class="dropdown-item text-light" href="index.html#how-to-use" aria-label="How It Works Section">How It Works?</a></li>
+                  <li><a class="dropdown-item text-light" href="index.html#testimonials" aria-label="Testimonials Section">Testimonials</a></li>
+                  <li><a class="dropdown-item text-light" href="index.html#team" aria-label="Team Section">Team</a></li>
+                  <li><a class="dropdown-item text-light" href="index.html#contact" aria-label="Contact Section">Contact</a></li>
+                </ul>
+              </li>
+              <!-- Other nav items -->
+              <li class="nav-item"><a class="nav-link" href="about-us.html" aria-label="About Us Page">About-us</a></li>
+              <li class="nav-item"><a class="nav-link" href="privacy.html" aria-label="Privacy and Policies Page">Privacy and Policies</a></li>
+              <li class="nav-item" id="auth-link">
+                <a class="nav-link" href="login_register.html" aria-label="Privacy and Policies Page">Login / Register</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" id="logout" href="#" aria-label="Log out">Logout</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
     </header>
 
     <!-- Main Content -->
     <main class="container my-5 flex-grow-1">
-        <div class="row aj-mt-150">
-            <!-- Profile Section -->
-            <div class="col-md-4">
-                <p class="text-center fw-bold fs-6 text-muted">Change Your Profile <br>Image on Gravatar</p>
-                <div class="text-center">
-                    <img id="profile-image" src="assets/img/default-profile.png" alt="Profile Image"
-                        class="img-thumbnail" style="width: 150px; height: 150px; object-fit: cover;">
-                </div>
-                <div class="text-center mt-3">
-                    <a href="https://gravatar.com/profile/avatars" target="_blank" rel="noopener noreferrer"
-                        class="btn btn-success" aria-label="Change your profile image on Gravatar">
-                        Change Image
-                    </a>
-
-                </div>
-            </div>
-
-            <!-- User Details Form -->
-            <div class="col-md-8">
-                <h2>Edit Profile</h2>
-                <form id="user-details-form">
-                    <div class="mb-3">
-                        <label for="email" class="form-label">Email</label>
-                        <input type="email" id="email" class="form-control" readonly disabled>
-                    </div>
-                    <div class="mb-3">
-                        <label for="address" class="form-label">Address</label>
-                        <input type="text" id="address" class="form-control">
-                    </div>
-                    <div class="mb-3">
-                        <label for="address2" class="form-label">Address Line 2</label>
-                        <input type="text" id="address2" class="form-control">
-                    </div>
-                    <div class="mb-3">
-                        <label for="zip" class="form-label">Zipcode</label>
-                        <input type="text" id="zip" class="form-control">
-                    </div>
-                    <div class="mb-3">
-                        <label for="phone" class="form-label">Phone</label>
-                        <input type="text" id="phone" class="form-control">
-                    </div>
-                    <button type="submit" class="btn btn-success">Save Changes</button>
-                </form>
-            </div>
+      <div class="row aj-mt-150">
+        <!-- Profile Section -->
+        <div class="col-md-4">
+          <p class="text-center fw-bold fs-6 text-muted">Change Your Profile <br />Image on Gravatar</p>
+          <div class="text-center">
+            <img
+              id="profile-image"
+              src="assets/img/default-profile.png"
+              alt="Profile Image"
+              class="img-thumbnail"
+              style="width: 150px; height: 150px; object-fit: cover"
+            />
+          </div>
+          <div class="text-center mt-3">
+            <a
+              href="https://gravatar.com/profile/avatars"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="btn btn-success"
+              aria-label="Change your profile image on Gravatar"
+            >
+              Change Image
+            </a>
+          </div>
         </div>
+
+        <!-- User Details Form -->
+        <div class="col-md-8">
+          <h2>Edit Profile</h2>
+          <form id="user-details-form">
+            <div class="mb-3">
+              <label for="email" class="form-label">Email</label>
+              <input type="email" id="email" class="form-control" readonly disabled />
+            </div>
+            <div class="mb-3">
+              <label for="address" class="form-label">Address</label>
+              <input type="text" id="address" class="form-control" />
+            </div>
+            <div class="mb-3">
+              <label for="address2" class="form-label">Address Line 2</label>
+              <input type="text" id="address2" class="form-control" />
+            </div>
+            <div class="mb-3">
+              <label for="zip" class="form-label">Zipcode</label>
+              <input type="text" id="zip" class="form-control" />
+            </div>
+            <div class="mb-3">
+              <label for="phone" class="form-label">Phone</label>
+              <input type="text" id="phone" class="form-control" />
+            </div>
+            <button type="submit" class="btn btn-success">Save Changes</button>
+          </form>
+        </div>
+      </div>
     </main>
 
     <!-- Footer -->
     <footer class="footer-bg" aria-labelledby="footer-heading">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-4">
-                    <span id="footer-heading" class="copyright">Copyright&nbsp;© BookMySpot 2024</span>
-                </div>
-                <div class="col-md-4">
-                    <ul class="list-inline social-buttons">
-                        <li class="list-inline-item">
-                            <a href="https://x.com/" target="_blank" aria-label="Follow us on Twitter"><i
-                                    class="fa fa-twitter"></i></a>
-                        </li>
-                        <li class="list-inline-item">
-                            <a href="https://www.facebook.com/" target="_blank" aria-label="Follow us on Facebook"><i
-                                    class="fa fa-facebook"></i></a>
-                        </li>
-                        <li class="list-inline-item">
-                            <a href="https://www.linkedin.com/" target="_blank"
-                                aria-label="Connect with us on LinkedIn"><i class="fa fa-linkedin"></i></a>
-                        </li>
-                    </ul>
-                </div>
-                <div class="col-md-4">
-                    <ul class="list-inline quicklinks">
-                        <li class="list-inline-item">
-                            <a href="privacy.html" aria-label="Read our Privacy Policy">Privacy Policy</a>
-                        </li>
-                        <li class="list-inline-item">
-                            <a href="about-us.html" aria-label="Learn more about us">About Us</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
+      <div class="container">
+        <div class="row">
+          <div class="col-md-4">
+            <span id="footer-heading" class="copyright">Copyright&nbsp;© BookMySpot 2024</span>
+          </div>
+          <div class="col-md-4">
+            <ul class="list-inline social-buttons">
+              <li class="list-inline-item">
+                <a href="https://x.com/" target="_blank" aria-label="Follow us on Twitter"><i class="fa fa-twitter"></i></a>
+              </li>
+              <li class="list-inline-item">
+                <a href="https://www.facebook.com/" target="_blank" aria-label="Follow us on Facebook"><i class="fa fa-facebook"></i></a>
+              </li>
+              <li class="list-inline-item">
+                <a href="https://www.linkedin.com/" target="_blank" aria-label="Connect with us on LinkedIn"><i class="fa fa-linkedin"></i></a>
+              </li>
+            </ul>
+          </div>
+          <div class="col-md-4">
+            <ul class="list-inline quicklinks">
+              <li class="list-inline-item">
+                <a href="privacy.html" aria-label="Read our Privacy Policy">Privacy Policy</a>
+              </li>
+              <li class="list-inline-item">
+                <a href="about-us.html" aria-label="Learn more about us">About Us</a>
+              </li>
+            </ul>
+          </div>
         </div>
+      </div>
     </footer>
 
     <!-- Scripts -->
     <script type="module" src="assets/js/dashboard.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
     <script type="module" src="assets/js/user-condition.js"></script>
-
-</body>
-
+  </body>
 </html>

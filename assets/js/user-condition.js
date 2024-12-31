@@ -1,10 +1,5 @@
 import { auth } from "./firebase-config.js";
-import {
-  onAuthStateChanged,
-  setPersistence,
-  browserSessionPersistence,
-  signOut,
-} from "https://www.gstatic.com/firebasejs/11.1.0/firebase-auth.js";
+import { onAuthStateChanged, setPersistence, browserSessionPersistence, signOut } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-auth.js";
 
 const logoutButton = document.getElementById("logout");
 
