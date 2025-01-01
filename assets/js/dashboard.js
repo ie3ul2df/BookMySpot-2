@@ -32,7 +32,7 @@ function populateUserProfile(data) {
   }
 }
 
-//--------------------- Handle User Authentication ---------------------
+//--------------------- Handle User Authentication to show tabs on dashboard screen ---------------------
 onAuthStateChanged(auth, async (user) => {
   if (user) {
     try {
@@ -44,10 +44,18 @@ onAuthStateChanged(auth, async (user) => {
 
       populateUserProfile(userData);
 
-      // Display Owner Dashboard if role is 'Owner'
+      // Show the Parking Spots tab if the user is an owner
+      const ownerPannel = document.getElementById("owner-pannel-li");
+      const adminPannel = document.getElementById("admin-pannel-li");
       if (userData.role === "owner") {
-        document.getElementById("owner-section").style.display = "block";
-        loadParkingSpots(user.uid); // Load parking spots for the owner
+        ownerPannel.classList.remove("d-none");
+      } else {
+        ownerPannel.classList.add("d-none");
+      }
+      if (userData.role === "admin") {
+        adminPannel.classList.remove("d-none");
+      } else {
+        adminPannel.classList.add("d-none");
       }
     } catch (error) {
       console.error("Error fetching user data:", error);
