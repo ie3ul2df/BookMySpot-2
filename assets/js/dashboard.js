@@ -45,20 +45,20 @@ onAuthStateChanged(auth, async (user) => {
       populateUserProfile(userData);
 
       // Show tabs based on user role
-      const ownerPannel = document.getElementById("owner-pannel-li");
-      const adminPannel = document.getElementById("admin-pannel-li");
+      const ownerPanel = document.getElementById("owner-panel-li");
+      const adminPanel = document.getElementById("admin-panel-li");
 
       if (userData.role === "owner") {
-        ownerPannel.classList.remove("d-none");
+        ownerPanel.classList.remove("d-none");
         loadParkingSpots(user.uid); // Load parking spots for the owner
       } else {
-        ownerPannel.classList.add("d-none");
+        ownerPanel.classList.add("d-none");
       }
 
       if (userData.role === "admin") {
-        adminPannel.classList.remove("d-none");
+        adminPanel.classList.remove("d-none");
       } else {
-        adminPannel.classList.add("d-none");
+        adminPanel.classList.add("d-none");
       }
     } catch (error) {
       console.error("Error fetching user data:", error);
@@ -91,7 +91,7 @@ if (userDetailsForm) {
   });
 }
 
-//--------------------- Handle Parking Spot Form Submission ---------------------
+//--------------------- Handle Parking Spot Form Submission on the owner panel ---------------------
 if (parkingForm) {
   parkingForm.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -122,7 +122,7 @@ if (parkingForm) {
   });
 }
 
-//--------------------- Fetch and Display Parking Spots ---------------------
+//--------------------- Fetch and Display Parking Spots on the owner panel ---------------------
 async function loadParkingSpots(ownerId) {
   try {
     const parkingRef = collection(db, "parking-spots");
