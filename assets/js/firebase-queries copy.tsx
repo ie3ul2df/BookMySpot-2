@@ -213,21 +213,16 @@ async function handleForgotPasswordForm(e) {
 //---------------------------- Attach Event Listeners ----------------------------
 
 document.addEventListener("DOMContentLoaded", () => {
-  /**
-   * Attach an event listener to a specified element if it exists.
-   * @param {string} selector - The CSS selector of the target element.
-   * @param {string} event - The event type (e.g., 'submit', 'click').
-   * @param {Function} handler - The function to handle the event.
-   * @param {string} elementName - A descriptive name for the element (optional).
-   */
-  const attachEventListener = (selector, event, handler, elementName = "Element") => {
-    const element = document.querySelector(selector);
-    if (element) {
-      element.addEventListener(event, handler);
+  const attachEventListener = (selector, event, handler, formName) => {
+    const form = document.querySelector(selector);
+    if (form) {
+      console.log(`${formName} found. Attaching ${event} event listener.`);
+      form.addEventListener(event, handler);
+    } else {
+      console.warn(`${formName} not found!`);
     }
   };
 
-  // Attach event listeners for various forms
   attachEventListener("#loginForm", "submit", handleLoginForm, "Login form");
   attachEventListener("#registerForm", "submit", handleRegisterForm, "Register form");
   attachEventListener("#forgotPasswordForm", "submit", handleForgotPasswordForm, "Forgot password form");
@@ -238,151 +233,132 @@ document.addEventListener("DOMContentLoaded", () => {
 const searchInput = document.getElementById("hero-search");
 const suggestionsList = document.getElementById("search-suggestions");
 
-if (searchInput && suggestionsList) {
-  // Debounce implementation
-  let debounceTimeout;
-  searchInput.addEventListener("input", (e) => {
-    clearTimeout(debounceTimeout);
-    debounceTimeout = setTimeout(() => fetchSuggestions(e.target.value.trim().toLowerCase()), 300);
-  });
+// Debounce implementation
+let debounceTimeout;
+searchInput.addEventListener("input", (e) => {
+  clearTimeout(debounceTimeout);
+  debounceTimeout = setTimeout(() => fetchSuggestions(e.target.value.trim().toLowerCase()), 300);
+});
 
-  // Fetch suggestions
-  const fetchSuggestions = async (query) => {
-    suggestionsList.innerHTML = ""; // Clear existing suggestions
-    if (!query) {
-      suggestionsList.classList.add("hidden");
-      return;
-    }
+// Fetch suggestions
+const fetchSuggestions = async (query) => {
+  suggestionsList.innerHTML = ""; // Clear existing suggestions
+  if (!query) {
+    suggestionsList.classList.add("hidden");
+    return;
+  }
 
-    try {
-      const parkingRef = collection(db, "parking-spots");
-      const querySnapshot = await getDocs(parkingRef); // Replace with optimized Firestore query if possible
+  try {
+    const parkingRef = collection(db, "parking-spots");
+    const querySnapshot = await getDocs(parkingRef); // Replace with optimized Firestore query if possible
 
-      querySnapshot.forEach((doc) => {
-        const spot = doc.data();
-        if (spot.postcode.toLowerCase().includes(query) || spot.address.toLowerCase().includes(query)) {
-          const suggestion = document.createElement("li");
-          suggestion.className = "list-group-item list-group-item-action";
-          suggestion.textContent = `${spot.address} - ${spot.postcode}`;
-          suggestion.dataset.spotId = doc.id;
+    querySnapshot.forEach((doc) => {
+      const spot = doc.data();
+      if (spot.postcode.toLowerCase().includes(query) || spot.address.toLowerCase().includes(query)) {
+        const suggestion = document.createElement("li");
+        suggestion.className = "list-group-item list-group-item-action";
+        suggestion.textContent = `${spot.address} - ${spot.postcode}`;
+        suggestion.dataset.spotId = doc.id;
 
-          // Add click listener for navigation
-          suggestion.addEventListener("click", () => {
+        // Add click listener for navigation
+        suggestion.addEventListener("click", () => {
+          window.location.href = `spot-details.html?id=${doc.id}`;
+        });
+
+        // Add keyboard navigation
+        suggestion.setAttribute("tabindex", "0");
+        suggestion.addEventListener("keydown", (event) => {
+          if (event.key === "Enter") {
             window.location.href = `spot-details.html?id=${doc.id}`;
-          });
+          }
+        });
 
-          // Add keyboard navigation
-          suggestion.setAttribute("tabindex", "0");
-          suggestion.addEventListener("keydown", (event) => {
-            if (event.key === "Enter") {
-              window.location.href = `spot-details.html?id=${doc.id}`;
-            }
-          });
-
-          suggestionsList.appendChild(suggestion);
-        }
-      });
-
-      // Display "No results" if no suggestions
-      if (suggestionsList.childElementCount === 0) {
-        const noResultItem = document.createElement("li");
-        noResultItem.className = "list-group-item text-muted";
-        noResultItem.textContent = "No matching spots found.";
-        suggestionsList.appendChild(noResultItem);
+        suggestionsList.appendChild(suggestion);
       }
+    });
 
-      suggestionsList.classList.remove("hidden");
-    } catch (error) {
-      console.error("Error fetching parking spots:", error);
-      const errorItem = document.createElement("li");
-      errorItem.className = "list-group-item text-danger";
-      errorItem.textContent = "Error fetching suggestions.";
-      suggestionsList.appendChild(errorItem);
+    // Display "No results" if no suggestions
+    if (suggestionsList.childElementCount === 0) {
+      const noResultItem = document.createElement("li");
+      noResultItem.className = "list-group-item text-muted";
+      noResultItem.textContent = "No matching spots found.";
+      suggestionsList.appendChild(noResultItem);
     }
-  };
-}
-//---------------------------- Spot Details and Booking on Spot Page ----------------------------
+
+    suggestionsList.classList.remove("hidden");
+  } catch (error) {
+    console.error("Error fetching parking spots:", error);
+    const errorItem = document.createElement("li");
+    errorItem.className = "list-group-item text-danger";
+    errorItem.textContent = "Error fetching suggestions.";
+    suggestionsList.appendChild(errorItem);
+  }
+};
+
+//---------------------------- Spot Details and Booking on spot page----------------------------
 
 // Parse query parameters
 const urlParams = new URLSearchParams(window.location.search);
 const spotId = urlParams.get("id");
 const spotDetailsContainer = document.getElementById("spot-details");
 const bookNowButton = document.getElementById("book-now-btn");
-const paymentForm = document.getElementById("payment-form");
-
-/**
- * Display a message in the spot details container.
- * @param {string} message - The message to display.
- */
-const displayMessage = (message) => {
-  if (spotDetailsContainer) {
-    spotDetailsContainer.innerHTML = `<p>${message}</p>`;
-  } else {
-    console.warn("Spot details container not found.");
-  }
-};
 
 // Fetch and display spot details
-if (spotDetailsContainer) {
-  (async () => {
-    if (!spotId) {
-      displayMessage("Invalid Spot ID. Please try again.");
-      return;
+(async () => {
+  if (!spotId) {
+    spotDetailsContainer.innerHTML = "<p>Invalid Spot ID. Please try again.</p>";
+    return;
+  }
+
+  spotDetailsContainer.innerHTML = "<p>Loading spot details...</p>";
+
+  try {
+    const spotDoc = await getDoc(doc(db, "parking-spots", spotId));
+    if (spotDoc.exists()) {
+      const spot = spotDoc.data();
+      spotDetailsContainer.innerHTML = `
+        <h2>${spot.address}</h2>
+        <p>Postcode: ${spot.postcode}</p>
+        <p>Price: £${spot.price}</p>
+        <p>Availability: ${spot.availability}</p>
+      `;
+    } else {
+      spotDetailsContainer.innerHTML = "<p>Spot not found</p>";
     }
+  } catch (error) {
+    console.error("Error fetching spot details:", error);
+    spotDetailsContainer.innerHTML = "<p>Error fetching spot details. Please try again later.</p>";
+  }
+})();
 
-    displayMessage("Loading spot details...");
-
-    try {
-      const spotDoc = await getDoc(doc(db, "parking-spots", spotId));
-      if (spotDoc.exists()) {
-        const spot = spotDoc.data();
-        spotDetailsContainer.innerHTML = `
-          <h2>${spot.address}</h2>
-          <p>Postcode: ${spot.postcode}</p>
-          <p>Price: £${spot.price}</p>
-          <p>Availability: ${spot.availability}</p>
-        `;
-      } else {
-        displayMessage("Spot not found.");
-      }
-    } catch (error) {
-      console.error("Error fetching spot details:", error);
-      displayMessage("Error fetching spot details. Please try again later.");
-    }
-  })();
-}
-
-// Handle Booking Button Click
+// Handle Booking
 if (bookNowButton) {
   bookNowButton.addEventListener("click", () => {
     if (!auth.currentUser) {
-      window.location.href = "login_register.html"; // Redirect to login if user is not authenticated
+      window.location.href = "login_register.html";
     } else {
       const paymentModal = new bootstrap.Modal(document.getElementById("paymentModal"));
       paymentModal.show();
     }
   });
+} else {
+  console.error("Book Now button not found.");
 }
 
 // Handle Payment Form Submission
+const paymentForm = document.getElementById("payment-form");
 if (paymentForm) {
   paymentForm.addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    const cardNumber = document.getElementById("card-number")?.value;
+    const cardNumber = document.getElementById("card-number").value;
     if (cardNumber !== "1111222233334444") {
       alert("Invalid card details.");
       return;
     }
 
     try {
-      const userId = auth.currentUser?.uid;
-      if (!userId) {
-        alert("User not authenticated. Please log in again.");
-        window.location.href = "login_register.html";
-        return;
-      }
-
+      const userId = auth.currentUser.uid;
       const booking = {
         spotId,
         userId,
@@ -401,4 +377,6 @@ if (paymentForm) {
       alert("Error processing booking. Please try again later.");
     }
   });
+} else {
+  console.error("Payment form not found.");
 }
