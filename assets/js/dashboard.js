@@ -1,11 +1,16 @@
+// Import Firebase modules and services
 import { auth, db } from "./firebase-config.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-auth.js";
 import { doc, getDoc, updateDoc, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-firestore.js";
 
+// DOM Elements
 const userDetailsForm = document.getElementById("user-details-form");
 const profileImage = document.getElementById("profile-image");
-const parkingForm = document.getElementById("parking-spot-form");
 const spotsTable = document.getElementById("parking-spots-table");
+const availabilityData = [];
+const availabilityList = document.getElementById("availability-list");
+const openCalendarBtn = document.getElementById("open-calendar-btn");
+const parkingSpotForm = document.getElementById("parking-spot-form");
 
 //--------------------- Gravatar for User Profile ---------------------
 function getGravatarUrl(email) {
@@ -32,7 +37,7 @@ function populateUserProfile(data) {
   }
 }
 
-//--------------------- Handle User Authentication to Show Tabs on Dashboard ---------------------
+//--------------------- Handle User Authentication ---------------------
 onAuthStateChanged(auth, async (user) => {
   if (user) {
     try {
@@ -44,27 +49,25 @@ onAuthStateChanged(auth, async (user) => {
 
       populateUserProfile(userData);
 
-      // Show tabs based on user role
       const ownerPanel = document.getElementById("owner-panel-li");
       const adminPanel = document.getElementById("admin-panel-li");
 
       if (userData.role === "owner") {
-        ownerPanel.classList.remove("d-none");
-        loadParkingSpots(user.uid); // Load parking spots for the owner
+        ownerPanel?.classList.remove("d-none");
+        loadParkingSpots(user.uid);
       } else {
-        ownerPanel.classList.add("d-none");
+        ownerPanel?.classList.add("d-none");
       }
 
       if (userData.role === "admin") {
-        adminPanel.classList.remove("d-none");
+        adminPanel?.classList.remove("d-none");
       } else {
-        adminPanel.classList.add("d-none");
+        adminPanel?.classList.add("d-none");
       }
     } catch (error) {
       console.error("Error fetching user data:", error);
     }
   } else {
-    // Redirect to login if not authenticated
     window.location.href = "login_register.html";
   }
 });
@@ -91,44 +94,13 @@ if (userDetailsForm) {
   });
 }
 
-//--------------------- Handle Parking Spot Form Submission on the owner panel ---------------------
-if (parkingForm) {
-  parkingForm.addEventListener("submit", async (e) => {
-    e.preventDefault();
-
-    const address = document.getElementById("spot-address").value;
-    const postcode = document.getElementById("spot-postcode").value;
-    const price = document.getElementById("spot-price").value;
-
-    // Get selected availability
-    const availability = document.querySelector('input[name="spot-availability"]:checked').value;
-
-    const parkingSpot = {
-      address,
-      postcode,
-      price,
-      availability,
-      ownerId: auth.currentUser.uid,
-    };
-
-    try {
-      await addDoc(collection(db, "parking-spots"), parkingSpot);
-      alert("Parking spot added successfully!");
-      parkingForm.reset();
-      loadParkingSpots(auth.currentUser.uid); // Refresh parking spots
-    } catch (error) {
-      console.error("Error adding parking spot:", error);
-    }
-  });
-}
-
-//--------------------- Fetch and Display Parking Spots on the owner panel ---------------------
+//--------------------- Load Parking Spots ---------------------
 async function loadParkingSpots(ownerId) {
   try {
     const parkingRef = collection(db, "parking-spots");
     const querySnapshot = await getDocs(parkingRef);
 
-    spotsTable.innerHTML = ""; // Clear table
+    spotsTable.innerHTML = "";
     querySnapshot.forEach((doc) => {
       const spot = doc.data();
       if (spot.ownerId === ownerId) {
@@ -136,8 +108,8 @@ async function loadParkingSpots(ownerId) {
           <tr>
             <td>${spot.address}</td>
             <td>${spot.postcode}</td>
-            <td>${spot.price}</td>
-            <td>${spot.availability}</td>
+            <td>${spot.pricePerHour}</td>
+            <td>${spot.availability.map((av) => av.start).join(", ")}</td>
           </tr>`;
         spotsTable.insertAdjacentHTML("beforeend", row);
       }
@@ -145,4 +117,93 @@ async function loadParkingSpots(ownerId) {
   } catch (error) {
     console.error("Error loading parking spots:", error);
   }
+}
+
+//--------------------- Initialize Flatpickr ---------------------
+if (openCalendarBtn) {
+  openCalendarBtn.addEventListener("click", (e) => {
+    e.preventDefault(); // Prevent the button from triggering form submission
+  });
+
+  // Initialize Flatpickr for selecting date-time ranges
+  flatpickr(openCalendarBtn, {
+    enableTime: true, // Allows time selection
+    mode: "range", // Enables range selection
+    dateFormat: "Y-m-d H:i", // Formats date and time
+    minDate: "today", // Prevents selecting past dates
+    inline: false, // Keeps the calendar floating
+    onClose: function (selectedDates) {
+      if (selectedDates.length === 2) {
+        const start = selectedDates[0];
+        const end = selectedDates[1];
+
+        // Add the selected range to availability data
+        availabilityData.push({ start, end });
+
+        // Display selected availability in a list
+        const listItem = document.createElement("li");
+        listItem.className = "list-group-item d-flex justify-content-between align-items-center";
+        listItem.innerHTML = `
+          ${start.toLocaleDateString()} ${start.toLocaleTimeString()} to 
+          ${end.toLocaleDateString()} ${end.toLocaleTimeString()}
+          <button class="btn btn-sm btn-danger remove-btn">Remove</button>
+        `;
+        availabilityList.appendChild(listItem);
+
+        // Remove availability on "Remove" button click
+        listItem.querySelector(".remove-btn").addEventListener("click", () => {
+          const index = availabilityData.findIndex((range) => range.start.getTime() === start.getTime() && range.end.getTime() === end.getTime());
+          if (index > -1) {
+            availabilityData.splice(index, 1); // Remove from data array
+            listItem.remove(); // Remove from UI
+          }
+        });
+      }
+    },
+  });
+}
+//--------------------- Handle Parking Spot Form Submission ---------------------
+if (parkingSpotForm) {
+  parkingSpotForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const address = document.getElementById("spot-address").value.trim();
+    const postcode = document.getElementById("spot-postcode").value.trim();
+    const pricePerHour = parseFloat(document.getElementById("spot-price").value.trim());
+
+    if (!address || !postcode || !pricePerHour || availabilityData.length === 0) {
+      alert("Please fill out all fields and set availability.");
+      return;
+    }
+
+    try {
+      const userId = auth.currentUser?.uid;
+      if (!userId) {
+        alert("You need to log in to save a parking spot.");
+        window.location.href = "login_register.html";
+        return;
+      }
+
+      const spotDetails = {
+        address,
+        postcode,
+        pricePerHour,
+        availability: availabilityData.map((range) => ({
+          start: range.start.toISOString(),
+          end: range.end.toISOString(),
+        })),
+        ownerId: userId,
+      };
+
+      await addDoc(collection(db, "parking-spots"), spotDetails);
+
+      alert("Parking spot saved successfully!");
+      parkingSpotForm.reset();
+      availabilityData.length = 0;
+      availabilityList.innerHTML = "";
+    } catch (error) {
+      console.error("Error saving parking spot:", error);
+      alert("Failed to save parking spot. Please try again.");
+    }
+  });
 }

@@ -20,6 +20,9 @@
     <link rel="stylesheet" href="assets/fonts/fontawesome5-overrides.min.css" />
     <link rel="stylesheet" href="assets/css/bs-theme-overrides.css" />
     <link rel="stylesheet" href="assets/css/style.css" />
+    <
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
   </head>
 
   <body id="dashboard-body" data-bs-spy="scroll" data-bs-target="#mainNav" data-bs-offset="54" class="d-flex flex-column min-vh-100">
@@ -217,32 +220,28 @@
               <div id="owner-section" class="mt-5">
                 <h2>Add Parking Spot</h2>
                 <form id="parking-spot-form">
+                  <!-- Parking Spot Details -->
                   <div class="mb-3">
                     <label for="spot-address" class="form-label">Address</label>
-                    <input type="text" id="spot-address" class="form-control" required />
+                    <input type="text" id="spot-address" class="form-control" placeholder="Enter spot address" required />
                   </div>
                   <div class="mb-3">
                     <label for="spot-postcode" class="form-label">Postcode</label>
-                    <input type="text" id="spot-postcode" class="form-control" required />
+                    <input type="text" id="spot-postcode" class="form-control" placeholder="Enter postcode" required />
                   </div>
                   <div class="mb-3">
-                    <label for="spot-price" class="form-label">Price (£)</label>
-                    <input type="number" id="spot-price" class="form-control" required />
+                    <label for="spot-price" class="form-label">Price Per Hour (£)</label>
+                    <input type="number" id="spot-price" class="form-control" placeholder="Enter hourly rate" required />
                   </div>
+
+                  <!-- Availability Calendar -->
                   <div class="mb-3">
-                    <label for="spot-availability" class="form-label">Availability</label>
-                    <div>
-                      <div class="form-check">
-                        <input class="form-check-input" type="radio" name="spot-availability" id="available" value="available" required />
-                        <label class="form-check-label" for="available">Available</label>
-                      </div>
-                      <div class="form-check">
-                        <input class="form-check-input" type="radio" name="spot-availability" id="busy" value="busy" />
-                        <label class="form-check-label" for="busy">Busy</label>
-                      </div>
-                    </div>
+                    <label class="form-label">Set Available Dates & Hours</label>
+                    <button id="open-calendar-btn" class="btn btn-primary w-100">Set Availability</button>
+                    <ul id="availability-list" class="list-group mt-3"></ul>
                   </div>
-                  <button type="submit" class="btn btn-primary">Add Parking Spot</button>
+
+                  <button type="submit" class="btn btn-primary">Save Parking Spot</button>
                 </form>
 
                 <h3 class="mt-4">Your Parking Spots</h3>
