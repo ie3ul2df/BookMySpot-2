@@ -22,7 +22,7 @@
     <link rel="stylesheet" href="assets/css/style.css" />
   </head>
 
-  <body id="privacy-page-body" data-bs-spy="scroll" data-bs-target="#mainNav" data-bs-offset="54">
+  <body class="d-flex flex-column min-vh-100" id="privacy-page-body" data-bs-spy="scroll" data-bs-target="#mainNav" data-bs-offset="54">
     <header>
       <!-- //_____________________________________ Navbar _____________________________________// -->
       <nav class="navbar navbar-expand-lg fixed-top bg-dark navbar-dark" id="mainNav" aria-label="Main Navigation">
@@ -78,34 +78,38 @@
         </div>
       </nav>
     </header>
+    <main class="flex-grow-1">
+      <!--_____________________________________ Spot Page Body _____________________________________-->
+      <div class="container aj-mt-150 aj-mb-100">
+        <div id="spot-details"></div>
+        <button id="book-now-btn" class="btn btn-dark text-primary mt-3">Book Now</button>
+      </div>
 
-    <!--_____________________________________ Spot Page Body _____________________________________-->
-    <div class="container mt-5">
-      <div id="spot-details"></div>
-      <button id="book-now-btn" class="btn btn-primary mt-3">Book Now</button>
-    </div>
-
-    <!-- Bootstrap Modal for Payment -->
-    <div class="modal fade" id="paymentModal" tabindex="-1" aria-labelledby="paymentModalLabel" aria-hidden="true">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="paymentModalLabel">Payment</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-            <form id="payment-form">
-              <div class="mb-3">
-                <label for="card-number" class="form-label">Card Number</label>
-                <input type="text" id="card-number" class="form-control" placeholder="1111222233334444" required />
-              </div>
-              <button type="submit" class="btn btn-success">Pay & Book</button>
-            </form>
+      <!-- Bootstrap Modal for Payment -->
+      <div class="modal fade" id="paymentModal" tabindex="-1" aria-labelledby="paymentModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="paymentModalLabel">Payment</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <form id="payment-form">
+                <div class="mb-3">
+                  <label for="card-number" class="form-label">Card Number</label>
+                  <input type="text" id="card-number" class="form-control" placeholder="1111222233334444" required />
+                </div>
+                <div class="mb-3">
+                  <label for="card-name" class="form-label">Card name</label>
+                  <input type="text" id="card-name" class="form-control" placeholder="Any name" required />
+                </div>
+                <button type="submit" class="btn btn-success">Pay & Book</button>
+              </form>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-
+    </main>
     <!-- //_____________________________________ Footer _____________________________________// -->
 
     <footer class="footer-bg" aria-labelledby="footer-heading">
@@ -143,5 +147,11 @@
 
     <script src="assets/js/agency.js"></script>
     <script type="module" src="assets/js/firebase-queries.js"></script>
+    <script type="module" src="assets/js/spot-details.js"></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"
+      integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy"
+      crossorigin="anonymous"
+    ></script>
   </body>
 </html>

@@ -9,7 +9,7 @@ import {
   browserSessionPersistence,
   signOut,
 } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-auth.js";
-import { setDoc, doc, serverTimestamp, collection, getDocs, addDoc, getDoc } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-firestore.js";
+import { setDoc, doc, serverTimestamp, collection, getDocs } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-firestore.js";
 
 //---------------------------- Signin / Signout  ----------------------------
 
@@ -300,105 +300,4 @@ if (searchInput && suggestionsList) {
       suggestionsList.appendChild(errorItem);
     }
   };
-}
-//---------------------------- Spot Details and Booking on Spot Page ----------------------------
-
-// Parse query parameters
-const urlParams = new URLSearchParams(window.location.search);
-const spotId = urlParams.get("id");
-const spotDetailsContainer = document.getElementById("spot-details");
-const bookNowButton = document.getElementById("book-now-btn");
-const paymentForm = document.getElementById("payment-form");
-
-/**
- * Display a message in the spot details container.
- * @param {string} message - The message to display.
- */
-const displayMessage = (message) => {
-  if (spotDetailsContainer) {
-    spotDetailsContainer.innerHTML = `<p>${message}</p>`;
-  } else {
-    console.warn("Spot details container not found.");
-  }
-};
-
-// Fetch and display spot details
-if (spotDetailsContainer) {
-  (async () => {
-    if (!spotId) {
-      displayMessage("Invalid Spot ID. Please try again.");
-      return;
-    }
-
-    displayMessage("Loading spot details...");
-
-    try {
-      const spotDoc = await getDoc(doc(db, "parking-spots", spotId));
-      if (spotDoc.exists()) {
-        const spot = spotDoc.data();
-        spotDetailsContainer.innerHTML = `
-          <h2>${spot.address}</h2>
-          <p>Postcode: ${spot.postcode}</p>
-          <p>Price: £${spot.price}</p>
-          <p>Availability: ${spot.availability}</p>
-        `;
-      } else {
-        displayMessage("Spot not found.");
-      }
-    } catch (error) {
-      console.error("Error fetching spot details:", error);
-      displayMessage("Error fetching spot details. Please try again later.");
-    }
-  })();
-}
-
-// Handle Booking Button Click
-if (bookNowButton) {
-  bookNowButton.addEventListener("click", () => {
-    if (!auth.currentUser) {
-      window.location.href = "login_register.html"; // Redirect to login if user is not authenticated
-    } else {
-      const paymentModal = new bootstrap.Modal(document.getElementById("paymentModal"));
-      paymentModal.show();
-    }
-  });
-}
-
-// Handle Payment Form Submission
-if (paymentForm) {
-  paymentForm.addEventListener("submit", async (e) => {
-    e.preventDefault();
-
-    const cardNumber = document.getElementById("card-number")?.value;
-    if (cardNumber !== "1111222233334444") {
-      alert("Invalid card details.");
-      return;
-    }
-
-    try {
-      const userId = auth.currentUser?.uid;
-      if (!userId) {
-        alert("User not authenticated. Please log in again.");
-        window.location.href = "login_register.html";
-        return;
-      }
-
-      const booking = {
-        spotId,
-        userId,
-        dateTime: new Date().toISOString(),
-      };
-
-      await addDoc(collection(db, "bookings"), booking);
-
-      alert("Booking successful!");
-      const paymentModal = bootstrap.Modal.getInstance(document.getElementById("paymentModal"));
-      if (paymentModal) paymentModal.hide();
-
-      window.location.href = "dashboard.html"; // Redirect to dashboard after booking
-    } catch (error) {
-      console.error("Error booking spot:", error);
-      alert("Error processing booking. Please try again later.");
-    }
-  });
 }
