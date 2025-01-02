@@ -161,6 +161,21 @@
               </button>
             </li>
 
+            <!-- Booked spots -->
+            <li class="nav-item d-none" id="booked-spots-li" role="presentation">
+              <button
+                class="nav-link"
+                id="booked-spots"
+                data-bs-toggle="tab"
+                data-bs-target="#booked-spots-content"
+                type="button"
+                role="tab"
+                aria-controls="booked-spots-content"
+                aria-selected="false"
+              >
+                Booked Spots
+              </button>
+            </li>
             <!-- Bookings Tab -->
             <li class="nav-item" role="presentation">
               <button
@@ -264,14 +279,27 @@
             <!-- Bookings Content -->
             <div class="tab-pane fade mt-5" id="bookings-content" role="tabpanel" aria-labelledby="bookins-tab">
               <div class="container">
-                <h2>Your Bookings</h1>
+                <h2>Your Bookings</h2>
+                <!-- List of your bookings will be displayed here. -->
                 <div id="bookings-container" class="mt-4"></div>
               </div>
             </div>
+
+            <!-- Bookings Content -->
+            <div class="tab-pane fade mt-5" id="booked-spots-content" role="tabpanel" aria-labelledby="booked-spots-content">
+              <div id="booked-spots-container" class="container mt-4">
+                <h2>Booked Spots</h2>
+                <div id="booked-spots-cards" class="row"></div>
+              </div>
+            </div>
           </div>
+          <!-- End of Tab Content -->
         </div>
+        <!-- End of col-md-8 -->
       </div>
+      <!-- End of row -->
     </main>
+    <!-- End of Main Content -->
 
     <!-- Footer -->
     <footer class="footer-bg" aria-labelledby="footer-heading">

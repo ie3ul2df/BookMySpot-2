@@ -50,6 +50,9 @@ const initializeFlatpickr = (button, availability, onDateSelect) => {
   });
 };
 
+// -------------------------------------------------------
+// -------------------------------------------------------
+
 /**
  * Fetch spot details from the database.
  */

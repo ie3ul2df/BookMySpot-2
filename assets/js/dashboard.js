@@ -1,7 +1,7 @@
 // Import Firebase modules and services
 import { auth, db } from "./firebase-config.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-auth.js";
-import { doc, getDoc, updateDoc, collection, query, where, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-firestore.js";
+import { doc, getDoc, updateDoc, collection, query, where, addDoc, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-firestore.js";
 
 // DOM Elements
 const userDetailsForm = document.getElementById("user-details-form");
@@ -50,13 +50,16 @@ onAuthStateChanged(auth, async (user) => {
       populateUserProfile(userData);
 
       const ownerPanel = document.getElementById("owner-panel-li");
+      const bookedSpots = document.getElementById("booked-spots-li");
       const adminPanel = document.getElementById("admin-panel-li");
 
       if (userData.role === "owner") {
         ownerPanel?.classList.remove("d-none");
+        bookedSpots?.classList.remove("d-none");
         loadParkingSpots(user.uid);
       } else {
         ownerPanel?.classList.add("d-none");
+        bookedSpots?.classList.add("d-none");
       }
 
       if (userData.role === "admin") {
@@ -314,10 +317,6 @@ const getSpotDetails = async (spotId) => {
   }
 };
 
-/**
- * Display user bookings in the dashboard.
- * @param {Array} bookings - List of bookings to display.
- */
 const displayBookings = (bookings) => {
   bookingsContainer.innerHTML = ""; // Clear any existing content
 
@@ -332,11 +331,39 @@ const displayBookings = (bookings) => {
         <p class="card-text"><strong>Address:</strong> ${booking.address}</p>
         <p class="card-text"><strong>Postcode:</strong> ${booking.postcode}</p>
         <p class="card-text"><strong>Selected Date & Time:</strong> ${booking.selectedDateTimeRange}</p>
+        <button class="btn btn-danger delete-booking-btn" data-id="${booking.id}">Cancel Booking</button>
       </div>
     `;
 
     bookingsContainer.appendChild(bookingCard);
   });
+
+  // Add event listeners to all delete buttons
+  const deleteButtons = document.querySelectorAll(".delete-booking-btn");
+  deleteButtons.forEach((button) => {
+    button.addEventListener("click", async (event) => {
+      const bookingId = event.target.dataset.id;
+      const confirmDelete = confirm("Are you sure you want to cancel this booking?");
+      if (confirmDelete) {
+        await deleteBooking(bookingId);
+        fetchUserBookings(); // Refresh the bookings list
+      }
+    });
+  });
+};
+
+/**
+ * Delete a booking from the database.
+ * @param {string} bookingId - The ID of the booking to delete.
+ */
+const deleteBooking = async (bookingId) => {
+  try {
+    await deleteDoc(doc(db, "bookings", bookingId));
+    alert("Booking successfully cancelled.");
+  } catch (error) {
+    console.error("Error cancelling booking:", error);
+    alert("Error cancelling booking. Please try again later.");
+  }
 };
 
 /**
@@ -354,3 +381,193 @@ const initializeDashboard = () => {
 
 // Initialize
 initializeDashboard();
+
+//------------------------ Ranking system ------------------------
+//------------------------ Ranking system ------------------------
+//------------------------ Ranking system ------------------------
+//------------------------ Ranking system ------------------------
+// ________________________________________________________________
+// ________________________________________________________________
+
+const bookedSpotsContainer = document.getElementById("booked-spots-cards");
+
+// Fetch booked spots for the current owner
+async function fetchBookedSpots(ownerId) {
+  try {
+    const bookingsRef = collection(db, "bookings");
+    const querySnapshot = await getDocs(bookingsRef);
+
+    const bookedSpots = [];
+    for (const bookingDoc of querySnapshot.docs) {
+      const booking = bookingDoc.data();
+      const spotDoc = await getDoc(doc(db, "parking-spots", booking.spotId));
+      const userDoc = await getDoc(doc(db, "users", booking.userId));
+
+      if (spotDoc.exists() && userDoc.exists() && spotDoc.data().ownerId === ownerId) {
+        bookedSpots.push({
+          id: bookingDoc.id,
+          ...booking,
+          spotDetails: spotDoc.data(),
+          userDetails: userDoc.data(),
+        });
+      }
+    }
+
+    displayBookedSpots(bookedSpots);
+  } catch (error) {
+    console.error("Error fetching booked spots:", error);
+  }
+}
+
+// Add event listeners to dynamically created buttons
+function addEventListeners() {
+  document.querySelectorAll(".save-rank-btn").forEach((button) =>
+    button.addEventListener("click", async (event) => {
+      const bookingId = event.target.dataset.id;
+      const rankInput = document.getElementById(`rank-${bookingId}`);
+      const rankValue = parseInt(rankInput.value, 10);
+
+      if (!isNaN(rankValue) && rankValue >= 1 && rankValue <= 5) {
+        await saveUserRank(bookingId, rankValue);
+      } else {
+        alert("Please enter a valid rank between 1 and 5.");
+      }
+    })
+  );
+
+  document.querySelectorAll(".cancel-booking-btn").forEach((button) =>
+    button.addEventListener("click", async (event) => {
+      const bookingId = event.target.dataset.id;
+      if (confirm("Are you sure you want to cancel this booking?")) {
+        await cancelBooking(bookingId);
+      }
+    })
+  );
+}
+
+// Save rank to Firestore
+async function saveUserRank(bookingId, rank) {
+  try {
+    const bookingRef = doc(db, "bookings", bookingId);
+    await updateDoc(bookingRef, { rank });
+    alert("Rank saved successfully!");
+  } catch (error) {
+    console.error("Error saving rank:", error);
+    alert("Error saving rank. Please try again.");
+  }
+}
+
+// Cancel booking in Firestore
+async function cancelBooking(bookingId) {
+  try {
+    const bookingRef = doc(db, "bookings", bookingId);
+    await deleteDoc(bookingRef);
+    alert("Booking cancelled successfully!");
+    // Refresh the list
+    const ownerId = auth.currentUser?.uid;
+    if (ownerId) fetchBookedSpots(ownerId);
+  } catch (error) {
+    console.error("Error cancelling booking:", error);
+    alert("Error cancelling booking. Please try again.");
+  }
+}
+
+// Initialize fetch when the user is authenticated
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    fetchBookedSpots(user.uid);
+  } else {
+    alert("Please log in to access booked spots.");
+  }
+});
+
+// -----------------------------------------------------------------------
+// Create stars for rating
+function createStarRating(bookingId, maxRating = 5) {
+  const container = document.createElement("div");
+  container.classList.add("star-rating");
+  for (let i = 1; i <= maxRating; i++) {
+    const star = document.createElement("i");
+    star.classList.add("fa", "fa-star", "star");
+    star.dataset.rating = i;
+
+    // Add hover effect
+    star.addEventListener("mouseover", () => highlightStars(container, i));
+    star.addEventListener("mouseout", () => resetStars(container));
+
+    // Add click event to save rating
+    star.addEventListener("click", async () => {
+      selectStars(container, i);
+      await saveUserRank(bookingId, i);
+    });
+
+    container.appendChild(star);
+  }
+  return container;
+}
+
+// Highlight stars on hover
+function highlightStars(container, rating) {
+  const stars = container.querySelectorAll(".star");
+  stars.forEach((star, index) => {
+    star.style.color = index < rating ? "gold" : "lightgray";
+  });
+}
+
+// Reset stars to default state
+function resetStars(container) {
+  const stars = container.querySelectorAll(".star");
+  stars.forEach((star) => {
+    star.style.color = star.classList.contains("selected") ? "gold" : "lightgray";
+  });
+}
+
+// Select stars on click
+function selectStars(container, rating) {
+  const stars = container.querySelectorAll(".star");
+  stars.forEach((star, index) => {
+    star.classList.toggle("selected", index < rating);
+    star.style.color = index < rating ? "gold" : "lightgray";
+  });
+}
+// --------------------------------------------------------------
+// Updated displayBookedSpots function
+function displayBookedSpots(bookedSpots) {
+  bookedSpotsContainer.innerHTML = ""; // Clear existing cards
+
+  bookedSpots.forEach((booking) => {
+    const card = document.createElement("div");
+    card.className = "col-md-4";
+
+    // Create star rating container
+    const starRating = createStarRating(booking.id);
+
+    card.innerHTML = `
+      <div class="card mb-4">
+        <div class="card-body">
+          <h5 class="card-title">Spot: ${booking.spotDetails.address}</h5>
+          <p><strong>User:</strong> ${booking.userDetails.email}</p>
+          <p><strong>Date:</strong> ${booking.selectedDateTimeRange}</p>
+          <div class="mb-2">Rate this user:</div>
+        </div>
+      </div>
+    `;
+
+    // Append the star rating to the card
+    card.querySelector(".card-body").appendChild(starRating);
+
+    // Add cancel booking button
+    const cancelButton = document.createElement("button");
+    cancelButton.classList.add("btn", "btn-danger", "cancel-booking-btn");
+    cancelButton.textContent = "Cancel Booking";
+    cancelButton.dataset.id = booking.id;
+    cancelButton.addEventListener("click", async () => {
+      if (confirm("Are you sure you want to cancel this booking?")) {
+        await cancelBooking(booking.id);
+      }
+    });
+    card.querySelector(".card-body").appendChild(cancelButton);
+
+    bookedSpotsContainer.appendChild(card);
+  });
+}
