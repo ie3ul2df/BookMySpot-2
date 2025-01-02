@@ -1,7 +1,7 @@
 // Import Firebase modules and services
 import { auth, db } from "./firebase-config.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-auth.js";
-import { doc, getDoc, updateDoc, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-firestore.js";
+import { doc, getDoc, updateDoc, collection, query, where, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-firestore.js";
 
 // DOM Elements
 const userDetailsForm = document.getElementById("user-details-form");
@@ -100,16 +100,26 @@ async function loadParkingSpots(ownerId) {
     const parkingRef = collection(db, "parking-spots");
     const querySnapshot = await getDocs(parkingRef);
 
-    spotsTable.innerHTML = "";
+    const spotsTable = document.getElementById("parking-spots-table"); // Ensure this matches your table's `tbody` ID
+    spotsTable.innerHTML = ""; // Clear any existing rows
+
     querySnapshot.forEach((doc) => {
       const spot = doc.data();
       if (spot.ownerId === ownerId) {
+        const availability = spot.availability
+          .map((av) => {
+            const startDate = new Date(av.start);
+            const endDate = new Date(av.end);
+            return `<span class="fw-bold"> From &nbsp </span> ${formatDate(startDate)} <span class="fw-bold"> &nbsp to &nbsp </span> ${formatDate(endDate)}`;
+          })
+          .join("<br>");
+
         const row = `
           <tr>
             <td>${spot.address}</td>
             <td>${spot.postcode}</td>
             <td>${spot.pricePerHour}</td>
-            <td>${spot.availability.map((av) => av.start).join(", ")}</td>
+            <td>${availability}</td>
           </tr>`;
         spotsTable.insertAdjacentHTML("beforeend", row);
       }
@@ -117,6 +127,23 @@ async function loadParkingSpots(ownerId) {
   } catch (error) {
     console.error("Error loading parking spots:", error);
   }
+}
+
+/**
+ * Format a date into dd/mm/yyyy hh:mm AM/PM format.
+ * @param {Date} date - The date to format.
+ * @returns {string} - The formatted date string.
+ */
+function formatDate(date) {
+  const options = {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    // hour12: true, // Enables AM/PM format
+  };
+  return new Intl.DateTimeFormat("en-GB", options).format(date);
 }
 
 //--------------------- Initialize Flatpickr ---------------------
@@ -207,3 +234,123 @@ if (parkingSpotForm) {
     }
   });
 }
+
+//------------------------ get the current user's bookings from the database  and display them in the dashboard
+//------------------------ get the current user's bookings from the database  and display them in the dashboard
+//------------------------ get the current user's bookings from the database  and display them in the dashboard
+//------------------------ get the current user's bookings from the database  and display them in the dashboard
+const bookingsContainer = document.getElementById("bookings-container");
+
+/**
+ * Display a message in a container.
+ * @param {HTMLElement} container - The container to display the message in.
+ * @param {string} message - The message to display.
+ * @param {string} [className=""] - Optional class for styling.
+ */
+const displayMessage = (container, message, className = "") => {
+  if (container) {
+    container.innerHTML = `<p class="${className}">${message}</p>`;
+  }
+};
+
+/**
+ * Fetch and display user bookings from the database.
+ */
+const fetchUserBookings = async () => {
+  displayMessage(bookingsContainer, "Loading your bookings...", "text-info");
+
+  try {
+    const user = auth.currentUser;
+    if (!user) {
+      displayMessage(bookingsContainer, "Please log in to view your bookings.", "text-danger");
+      return;
+    }
+
+    const userId = user.uid;
+    const bookingsRef = collection(db, "bookings");
+    const userBookingsQuery = query(bookingsRef, where("userId", "==", userId));
+
+    const querySnapshot = await getDocs(userBookingsQuery);
+
+    if (querySnapshot.empty) {
+      displayMessage(bookingsContainer, "No bookings found.", "text-warning");
+      return;
+    }
+
+    const bookings = [];
+    for (const doc of querySnapshot.docs) {
+      const data = doc.data();
+      const spotDetails = await getSpotDetails(data.spotId); // Fetch spot details using spotId
+      bookings.push({
+        id: doc.id,
+        ...data,
+        address: spotDetails.address,
+        postcode: spotDetails.postcode,
+      });
+    }
+
+    displayBookings(bookings);
+  } catch (error) {
+    console.error("Error fetching bookings:", error);
+    displayMessage(bookingsContainer, "Error loading bookings. Please try again later.", "text-danger");
+  }
+};
+
+/**
+ * Fetch spot details using spotId.
+ * @param {string} spotId - The ID of the parking spot.
+ * @returns {Object} - The spot details including address and postcode.
+ */
+const getSpotDetails = async (spotId) => {
+  try {
+    const spotDoc = await getDoc(doc(db, "parking-spots", spotId));
+    if (spotDoc.exists()) {
+      return spotDoc.data();
+    }
+    return { address: "Unknown", postcode: "Unknown" }; // Default values if spot is not found
+  } catch (error) {
+    console.error("Error fetching spot details:", error);
+    return { address: "Error", postcode: "Error" }; // Default values on error
+  }
+};
+
+/**
+ * Display user bookings in the dashboard.
+ * @param {Array} bookings - List of bookings to display.
+ */
+const displayBookings = (bookings) => {
+  bookingsContainer.innerHTML = ""; // Clear any existing content
+
+  bookings.forEach((booking) => {
+    const bookingCard = document.createElement("div");
+    bookingCard.className = "card mb-3";
+
+    bookingCard.innerHTML = `
+      <div class="card-body">
+        <h5 class="card-title">Booking ID: ${booking.id}</h5>
+        <p class="card-text"><strong>Spot ID:</strong> ${booking.spotId}</p>
+        <p class="card-text"><strong>Address:</strong> ${booking.address}</p>
+        <p class="card-text"><strong>Postcode:</strong> ${booking.postcode}</p>
+        <p class="card-text"><strong>Selected Date & Time:</strong> ${booking.selectedDateTimeRange}</p>
+      </div>
+    `;
+
+    bookingsContainer.appendChild(bookingCard);
+  });
+};
+
+/**
+ * Initialize dashboard and authenticate user.
+ */
+const initializeDashboard = () => {
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      fetchUserBookings();
+    } else {
+      displayMessage(bookingsContainer, "Please log in to view your bookings.", "text-danger");
+    }
+  });
+};
+
+// Initialize
+initializeDashboard();
