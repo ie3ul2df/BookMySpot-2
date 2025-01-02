@@ -260,3 +260,27 @@ img.card-img-top.rounded-circle.mx-auto.mt-4:hover {
     width: 50%;
   }
 }
+
+/* Ranking Stars Styles */
+
+.star-rating {
+  display: flex;
+  align-items: center;
+}
+
+.star-rating .fa {
+  font-size: 1.5rem;
+  margin-right: 5px;
+}
+
+.star-rating .gold {
+  color: gold;
+}
+
+.star-rating .fa-star-half-alt {
+  color: gold;
+}
+
+.star-rating .gray {
+  color: lightgray;
+}

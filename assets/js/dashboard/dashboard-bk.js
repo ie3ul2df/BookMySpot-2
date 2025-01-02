@@ -1,5 +1,5 @@
 // Import Firebase modules and services
-import { auth, db } from "./firebase-config.js";
+import { auth, db } from "../firebase-config.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-auth.js";
 import { doc, getDoc, updateDoc, collection, query, where, addDoc, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-firestore.js";
 
@@ -283,15 +283,18 @@ const fetchUserBookings = async () => {
     const bookings = [];
     for (const doc of querySnapshot.docs) {
       const data = doc.data();
-      const spotDetails = await getSpotDetails(data.spotId); // Fetch spot details using spotId
+      const spotDetails = await getSpotDetails(data.spotId); // Fetch spot details
+
       bookings.push({
         id: doc.id,
         ...data,
         address: spotDetails.address,
         postcode: spotDetails.postcode,
+        ownerRank: data.ownerRank || 0, // Ensure ownerRank is included
       });
     }
 
+    console.log("Fetched bookings with ranks:", bookings); // Debug log
     displayBookings(bookings);
   } catch (error) {
     console.error("Error fetching bookings:", error);
@@ -318,39 +321,101 @@ const getSpotDetails = async (spotId) => {
 };
 
 const displayBookings = (bookings) => {
-  bookingsContainer.innerHTML = ""; // Clear any existing content
+  // Clear existing content
+  bookingsContainer.innerHTML = "";
 
   bookings.forEach((booking) => {
-    const bookingCard = document.createElement("div");
-    bookingCard.className = "card mb-3";
-
-    bookingCard.innerHTML = `
-      <div class="card-body">
-        <h5 class="card-title">Booking ID: ${booking.id}</h5>
-        <p class="card-text"><strong>Spot ID:</strong> ${booking.spotId}</p>
-        <p class="card-text"><strong>Address:</strong> ${booking.address}</p>
-        <p class="card-text"><strong>Postcode:</strong> ${booking.postcode}</p>
-        <p class="card-text"><strong>Selected Date & Time:</strong> ${booking.selectedDateTimeRange}</p>
-        <button class="btn btn-danger delete-booking-btn" data-id="${booking.id}">Cancel Booking</button>
-      </div>
-    `;
-
+    const bookingCard = createBookingCard(booking);
     bookingsContainer.appendChild(bookingCard);
   });
-
-  // Add event listeners to all delete buttons
-  const deleteButtons = document.querySelectorAll(".delete-booking-btn");
-  deleteButtons.forEach((button) => {
-    button.addEventListener("click", async (event) => {
-      const bookingId = event.target.dataset.id;
-      const confirmDelete = confirm("Are you sure you want to cancel this booking?");
-      if (confirmDelete) {
-        await deleteBooking(bookingId);
-        fetchUserBookings(); // Refresh the bookings list
-      }
-    });
-  });
 };
+
+/**
+ * Create a booking card element.
+ * @param {Object} booking - Booking data.
+ * @returns {HTMLElement} - The booking card element.
+ */
+const createBookingCard = (booking) => {
+  const bookingCard = document.createElement("div");
+  bookingCard.className = "card mb-3";
+
+  // Card content
+  bookingCard.innerHTML = `
+    <div class="card-body">
+      <h5 class="card-title">Booking ID: ${booking.id}</h5>
+      <p class="card-text"><strong>Spot ID:</strong> ${booking.spotId}</p>
+      <p class="card-text"><strong>Address:</strong> ${booking.address}</p>
+      <p class="card-text"><strong>Postcode:</strong> ${booking.postcode}</p>
+      <p class="card-text"><strong>Selected Date & Time:</strong> ${booking.selectedDateTimeRange}</p>
+      <div class="mb-2">Rate the owner:</div>
+    </div>
+  `;
+
+  // Enable interactivity for the star rating
+  const starRating = createStarRating(
+    booking.ownerRank || 0, // Pass existing rank or default to 0
+    5, // Maximum stars
+    true, // Enable interactivity
+    async (newRank) => {
+      try {
+        await saveOwnerRank(booking.id, newRank); // Save rank to Firestore
+        alert("Rank saved successfully!");
+        booking.rank = newRank; // Update local rank
+      } catch (error) {
+        console.error("Error saving rank:", error);
+        alert("Failed to save the rank. Please try again.");
+      }
+    }
+  );
+
+  // Append the star rating to the card
+  bookingCard.querySelector(".card-body").appendChild(starRating);
+
+  // Create and append Cancel Booking button
+  const cancelButton = createCancelButton(booking.id);
+  bookingCard.querySelector(".card-body").appendChild(cancelButton);
+
+  return bookingCard;
+};
+
+/**
+ * Create a Cancel Booking button.
+ * @param {string} bookingId - The booking ID.
+ * @returns {HTMLElement} - The Cancel Booking button element.
+ */
+const createCancelButton = (bookingId) => {
+  const cancelButton = document.createElement("button");
+  cancelButton.className = "btn btn-danger mt-3"; // Add spacing
+  cancelButton.textContent = "Cancel Booking";
+  cancelButton.dataset.id = bookingId;
+
+  cancelButton.addEventListener("click", async () => {
+    if (confirm("Are you sure you want to cancel this booking?")) {
+      try {
+        await deleteBooking(bookingId); // Call deleteBooking function
+        alert("Booking cancelled successfully.");
+        fetchUserBookings(); // Refresh the bookings list
+      } catch (error) {
+        console.error("Error cancelling booking:", error);
+        alert("Failed to cancel the booking. Please try again.");
+      }
+    }
+  });
+
+  return cancelButton;
+};
+
+// Save rank to Firestore
+async function saveOwnerRank(bookingId, rank) {
+  try {
+    const bookingRef = doc(db, "bookings", bookingId);
+    await updateDoc(bookingRef, { ownerRank: rank });
+    alert("Rating saved successfully!");
+  } catch (error) {
+    console.error("Error saving rating:", error);
+    alert("Error saving rating. Please try again later.");
+  }
+}
 
 /**
  * Delete a booking from the database.
@@ -483,28 +548,47 @@ onAuthStateChanged(auth, (user) => {
 
 // -----------------------------------------------------------------------
 // Create stars for rating
-function createStarRating(bookingId, maxRating = 5) {
+const createStarRating = (averageRank, maxRating = 5, interactive = false, saveCallback = null) => {
   const container = document.createElement("div");
   container.classList.add("star-rating");
+  container.classList.add("d-block");
+
   for (let i = 1; i <= maxRating; i++) {
     const star = document.createElement("i");
     star.classList.add("fa", "fa-star", "star");
-    star.dataset.rating = i;
 
-    // Add hover effect
-    star.addEventListener("mouseover", () => highlightStars(container, i));
-    star.addEventListener("mouseout", () => resetStars(container));
+    // Full stars
+    if (i <= Math.floor(averageRank)) {
+      star.classList.add("gold");
+    }
+    // Half stars
+    else if (i === Math.ceil(averageRank) && averageRank % 1 >= 0.5) {
+      star.classList.add("gold");
+      star.classList.add("fa-star-half-alt");
+    }
+    // Empty stars
+    else {
+      star.classList.add("gray");
+    }
 
-    // Add click event to save rating
-    star.addEventListener("click", async () => {
-      selectStars(container, i);
-      await saveUserRank(bookingId, i);
-    });
+    // Add interactivity if enabled
+    if (interactive) {
+      star.addEventListener("mouseover", () => highlightStars(container, i));
+      star.addEventListener("mouseout", () => resetStars(container, averageRank));
+      star.addEventListener("click", () => {
+        selectStars(container, i);
+        if (saveCallback) saveCallback(i); // Call the save callback with the selected rank
+      });
+    } else {
+      // Disable interactivity for read-only mode
+      star.style.pointerEvents = "none";
+    }
 
     container.appendChild(star);
   }
+
   return container;
-}
+};
 
 // Highlight stars on hover
 function highlightStars(container, rating) {
@@ -515,10 +599,11 @@ function highlightStars(container, rating) {
 }
 
 // Reset stars to default state
-function resetStars(container) {
+function resetStars(container, existingRank = 0) {
   const stars = container.querySelectorAll(".star");
-  stars.forEach((star) => {
-    star.style.color = star.classList.contains("selected") ? "gold" : "lightgray";
+  stars.forEach((star, index) => {
+    star.style.color = index < existingRank ? "gold" : "lightgray";
+    star.classList.toggle("selected", index < existingRank);
   });
 }
 
@@ -531,7 +616,6 @@ function selectStars(container, rating) {
   });
 }
 // --------------------------------------------------------------
-// Updated displayBookedSpots function
 function displayBookedSpots(bookedSpots) {
   bookedSpotsContainer.innerHTML = ""; // Clear existing cards
 
@@ -539,8 +623,22 @@ function displayBookedSpots(bookedSpots) {
     const card = document.createElement("div");
     card.className = "col-md-4";
 
-    // Create star rating container
-    const starRating = createStarRating(booking.id);
+    // Enable interactivity for ranking the owner
+    const starRating = createStarRating(
+      booking.rank || 0, // Existing rank or default to 0
+      5,
+      true, // Enable interactivity
+      async (newRank) => {
+        try {
+          await saveUserRank(booking.id, newRank); // Save the rank
+          alert("Rank saved successfully!");
+          booking.rank = newRank; // Update the local rank value
+        } catch (error) {
+          console.error("Error saving rank:", error);
+          alert("Failed to save the rank. Please try again.");
+        }
+      }
+    );
 
     card.innerHTML = `
       <div class="card mb-4">
@@ -548,7 +646,7 @@ function displayBookedSpots(bookedSpots) {
           <h5 class="card-title">Spot: ${booking.spotDetails.address}</h5>
           <p><strong>User:</strong> ${booking.userDetails.email}</p>
           <p><strong>Date:</strong> ${booking.selectedDateTimeRange}</p>
-          <div class="mb-2">Rate this user:</div>
+          <div class="mb-2">Rate this owner:</div>
         </div>
       </div>
     `;
@@ -557,17 +655,87 @@ function displayBookedSpots(bookedSpots) {
     card.querySelector(".card-body").appendChild(starRating);
 
     // Add cancel booking button
-    const cancelButton = document.createElement("button");
-    cancelButton.classList.add("btn", "btn-danger", "cancel-booking-btn");
-    cancelButton.textContent = "Cancel Booking";
-    cancelButton.dataset.id = booking.id;
-    cancelButton.addEventListener("click", async () => {
-      if (confirm("Are you sure you want to cancel this booking?")) {
-        await cancelBooking(booking.id);
-      }
-    });
+    const cancelButton = createCancelButton(booking.id);
     card.querySelector(".card-body").appendChild(cancelButton);
 
     bookedSpotsContainer.appendChild(card);
   });
 }
+
+// ------------------ Show average rank of users and owners in the dashboard
+
+/**
+ * Calculate the average rank for the currently logged-in user, regardless of their role.
+ * @param {string} userId - The unique ID of the current user.
+ */
+const calculateAverageRankForCurrentUser = async (userId, role) => {
+  try {
+    const bookingsRef = collection(db, "bookings");
+    const querySnapshot = await getDocs(bookingsRef);
+
+    let totalRank = 0;
+    let rankCount = 0;
+
+    for (const docSnapshot of querySnapshot.docs) {
+      const booking = docSnapshot.data();
+
+      // If the user is a regular user, calculate based on ownerRank
+      if (role === "user" && booking.ownerRank && booking.userId === userId) {
+        totalRank += booking.ownerRank;
+        rankCount++;
+      }
+
+      // If the user is an owner, calculate based on rank
+      if (role === "owner" && booking.rank && booking.spotId) {
+        const spotDoc = await getDoc(doc(db, "parking-spots", booking.spotId));
+        if (spotDoc.exists() && spotDoc.data().ownerId === userId) {
+          totalRank += booking.rank;
+          rankCount++;
+        }
+      }
+    }
+
+    const averageRank = rankCount > 0 ? (totalRank / rankCount).toFixed(2) : "No ratings yet";
+    displayAverageRank(averageRank); // Update the UI
+  } catch (error) {
+    console.error("Error calculating average rank for current user:", error);
+  }
+};
+
+onAuthStateChanged(auth, async (user) => {
+  if (user) {
+    const userId = user.uid;
+
+    // Fetch user role
+    const userDoc = await getDoc(doc(db, "users", userId));
+    if (userDoc.exists()) {
+      const userData = userDoc.data();
+      const role = userData.role; // "user" or "owner"
+
+      calculateAverageRankForCurrentUser(userId, role); // Pass the role
+    } else {
+      console.error("User data not found.");
+    }
+  } else {
+    console.error("User is not logged in.");
+  }
+});
+
+/**
+ * Display the average rank as stars in the dashboard.
+ * @param {string|number} averageRank - The calculated average rank or a placeholder message.
+ */
+const displayAverageRank = (averageRank) => {
+  const rankContainer = document.getElementById("average-rank-display");
+
+  if (rankContainer) {
+    rankContainer.innerHTML = `<h5>Average Rank</h5>`;
+
+    if (averageRank === "No ratings yet") {
+      rankContainer.innerHTML += `<p>${averageRank}</p>`;
+    } else {
+      const starRating = createStarRating(parseFloat(averageRank)); // Ensure averageRank is a number
+      rankContainer.appendChild(starRating);
+    }
+  }
+};
