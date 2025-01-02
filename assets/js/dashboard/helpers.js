@@ -1,78 +1,25 @@
-export const createStarRating = (currentRank, maxRating = 5, interactive = false, saveCallback = null) => {
-  const container = document.createElement("div");
-  container.classList.add("star-rating");
-
-  for (let i = 1; i <= maxRating; i++) {
-    const star = document.createElement("i");
-    star.classList.add("fa", "fa-star", "star");
-
-    // Full stars
-    if (i <= Math.floor(currentRank)) {
-      star.classList.add("gold");
-    }
-    // Half stars
-    else if (i === Math.ceil(currentRank) && currentRank % 1 >= 0.5) {
-      star.classList.add("gold");
-      star.classList.add("fa-star-half-alt");
-    }
-    // Empty stars
-    else {
-      star.classList.add("gray");
-    }
-
-    // Add interactivity if enabled
-    if (interactive) {
-      star.addEventListener("mouseover", () => highlightStars(container, i));
-      star.addEventListener("mouseout", () => resetStars(container, currentRank));
-      star.addEventListener("click", () => {
-        selectStars(container, i);
-        if (saveCallback) saveCallback(i); // Save the rank when clicked
-      });
-    } else {
-      // Disable interactivity for read-only mode
-      star.style.pointerEvents = "none";
-    }
-
-    container.appendChild(star);
-  }
-
-  return container;
-};
-
 /**
- * Highlight stars on hover.
- * @param {HTMLElement} container - The star rating container.
- * @param {number} rating - The rating to highlight up to.
+ * Create a Cancel Booking button element with event listener to delete the
+ * booking from Firestore and reload the user's bookings list on success or
+ * display an error message on failure.
  */
-export const highlightStars = (container, rating) => {
-  const stars = container.querySelectorAll(".star");
-  stars.forEach((star, index) => {
-    star.style.color = index < rating ? "gold" : "lightgray";
-  });
-};
+export const createCancelButton = (bookingId) => {
+  const button = document.createElement("button");
+  button.className = "btn btn-danger mt-2";
+  button.textContent = "Cancel Booking";
 
-/**
- * Reset stars to their default state.
- * @param {HTMLElement} container - The star rating container.
- * @param {number} currentRank - The current rank to display.
- */
-export const resetStars = (container, currentRank) => {
-  const stars = container.querySelectorAll(".star");
-  stars.forEach((star, index) => {
-    star.style.color = index < currentRank ? "gold" : "lightgray";
-    star.classList.toggle("selected", index < currentRank);
+  button.addEventListener("click", async () => {
+    if (confirm("Are you sure you want to cancel this booking?")) {
+      try {
+        await deleteDoc(doc(db, "bookings", bookingId));
+        alert("Booking canceled successfully.");
+        fetchUserBookings();
+      } catch (error) {
+        console.error("Error canceling booking:", error);
+        alert("Failed to cancel booking. Please try again.");
+      }
+    }
   });
-};
 
-/**
- * Select stars on click.
- * @param {HTMLElement} container - The star rating container.
- * @param {number} rating - The rating to select.
- */
-export const selectStars = (container, rating) => {
-  const stars = container.querySelectorAll(".star");
-  stars.forEach((star, index) => {
-    star.classList.toggle("selected", index < rating);
-    star.style.color = index < rating ? "gold" : "lightgray";
-  });
+  return button;
 };

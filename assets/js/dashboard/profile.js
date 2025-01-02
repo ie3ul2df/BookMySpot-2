@@ -1,5 +1,7 @@
 import { auth, db } from "../firebase-config.js";
-import { doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-firestore.js";
+import { doc, getDoc, updateDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-firestore.js";
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-auth.js";
+import { createStarRating } from "./rating-system.js";
 
 /**
  * Fetch user data from the Firestore database.
@@ -64,4 +66,88 @@ export const handleProfileFormSubmission = (form) => {
 export const getGravatarUrl = (email) => {
   const md5 = CryptoJS.MD5(email.trim().toLowerCase());
   return `https://www.gravatar.com/avatar/${md5}?s=150&d=identicon`;
+};
+
+// --------------------------------------------------
+// --------------------------------------------------
+// --------------------------------------------------
+
+/**
+ * Calculate the average rank for the currently logged-in user, regardless of their role.
+ * @param {string} userId - The unique ID of the current user.
+ * @param {string} role - The role of the user (e.g., "user" or "owner").
+ */
+const calculateAverageRankForCurrentUser = async (userId, role) => {
+  try {
+    const bookingsRef = collection(db, "bookings");
+    const querySnapshot = await getDocs(bookingsRef);
+
+    let totalRank = 0;
+    let rankCount = 0;
+
+    for (const docSnapshot of querySnapshot.docs) {
+      const booking = docSnapshot.data();
+
+      // If the user is a regular user, calculate based on ownerRank
+      if (role === "user" && booking.ownerRank && booking.userId === userId) {
+        totalRank += booking.ownerRank;
+        rankCount++;
+      }
+
+      // If the user is an owner, calculate based on rank
+      if (role === "owner" && booking.rank && booking.spotId) {
+        const spotDoc = await getDoc(doc(db, "parking-spots", booking.spotId));
+        if (spotDoc.exists() && spotDoc.data().ownerId === userId) {
+          totalRank += booking.rank;
+          rankCount++;
+        }
+      }
+    }
+
+    const averageRank = rankCount > 0 ? (totalRank / rankCount).toFixed(2) : "No ratings yet";
+    displayAverageRank(averageRank); // Update the UI
+  } catch (error) {
+    console.error("Error calculating average rank for current user:", error);
+  }
+};
+
+/**
+ * Display the average rank in the specified container.
+ * @param {string|number} averageRank - The calculated average rank or a placeholder message.
+ */
+export const displayAverageRank = (averageRank) => {
+  const rankContainer = document.getElementById("average-rank-display");
+
+  if (rankContainer) {
+    rankContainer.innerHTML = `<h5>Average Rank</h5>`;
+
+    if (averageRank === "No ratings yet") {
+      rankContainer.innerHTML += `<p>${averageRank}</p>`;
+    } else {
+      const starRating = createStarRating(parseFloat(averageRank)); // Ensure averageRank is a number
+      rankContainer.appendChild(starRating);
+    }
+  }
+};
+
+export const initializeAverageRank = async () => {
+  onAuthStateChanged(auth, async (user) => {
+    if (user) {
+      const userId = user.uid;
+
+      // Fetch the user's role
+      const userDoc = await getDoc(doc(db, "users", userId));
+      if (userDoc.exists()) {
+        const userData = userDoc.data();
+        const role = userData.role; // e.g., "user" or "owner"
+
+        // Calculate and display the average rank
+        calculateAverageRankForCurrentUser(userId, role);
+      } else {
+        console.error("User data not found.");
+      }
+    } else {
+      console.error("User is not logged in.");
+    }
+  });
 };

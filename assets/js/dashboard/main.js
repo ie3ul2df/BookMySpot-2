@@ -1,58 +1,101 @@
-import { initializeAuth, redirectToLogin } from "./auth.js";
-import { fetchUserData, populateUserProfile, handleProfileFormSubmission } from "./profile.js";
-import { fetchUserBookings } from "./bookings.js";
-import { fetchBookedSpots } from "./parkingSpots.js";
-import { calculateAverageRankForCurrentUser } from "./rankings.js";
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-auth.js";
+import { auth } from "../firebase-config.js";
+import { fetchUserData, populateUserProfile, handleProfileFormSubmission, initializeAverageRank } from "./profile.js";
+import { fetchUserBookings } from "./my-bookings.js";
+import { fetchBookedSpots } from "./booked-spots.js";
+import { initializeFlatpickr, initializeParkingSpotForm } from "./owner-panel.js";
+import { loadParkingSpots } from "./parking-spots.js";
 
-// DOM Elements
-const userDetailsForm = document.getElementById("user-details-form");
-const bookingsContainer = document.getElementById("bookings-container");
-const bookedSpotsContainer = document.getElementById("booked-spots-cards");
-const averageRankContainer = document.getElementById("average-rank-display");
-
-/**
- * Initialize the application
- */
-const initializeDashboard = () => {
-  initializeAuth(
-    async (user) => {
-      console.log("User authenticated:", user.uid);
-
-      // Fetch user data
+//------------------------------------- Showing Tabs according to user role
+onAuthStateChanged(auth, async (user) => {
+  if (user) {
+    try {
       const userData = await fetchUserData(user.uid);
       if (!userData) {
-        console.error("User data not found.");
+        console.error("User data not found");
         return;
       }
 
-      // Populate user profile
       populateUserProfile(userData);
 
-      // Handle profile form submission
-      if (userDetailsForm) {
-        handleProfileFormSubmission(userDetailsForm);
+      const ownerPanel = document.getElementById("owner-panel-li");
+      const bookedSpots = document.getElementById("booked-spots-li");
+      const adminPanel = document.getElementById("admin-panel-li");
+
+      if (userData.role === "owner") {
+        ownerPanel?.classList.remove("d-none");
+        bookedSpots?.classList.remove("d-none");
+        await loadParkingSpots(user.uid); // Call the function from the module
+      } else {
+        ownerPanel?.classList.add("d-none");
+        bookedSpots?.classList.add("d-none");
       }
 
-      // Display average rank for the logged-in user
-      if (averageRankContainer) {
-        await calculateAverageRankForCurrentUser(user.uid, userData.role, averageRankContainer);
+      if (userData.role === "admin") {
+        adminPanel?.classList.remove("d-none");
+      } else {
+        adminPanel?.classList.add("d-none");
       }
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+    }
+  } else {
+    window.location.href = "login_register.html";
+  }
+});
 
-      // Load bookings if the user is a regular user
-      if (bookingsContainer && userData.role === "user") {
-        await fetchUserBookings(bookingsContainer);
-      }
+//---------------------------- Initialize the average rank display
 
-      // Load booked spots if the user is an owner
-      if (bookedSpotsContainer && userData.role === "owner") {
-        await fetchBookedSpots(user.uid, bookedSpotsContainer);
-      }
+// Initialize
+initializeAverageRank();
 
-      // Additional role-specific features can be added here
-    },
-    redirectToLogin // Redirect to login if unauthenticated
-  );
+//--------------------- M Y - B O O K I N G S ---------------------
+const loadBookingCards = () => {
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      fetchUserBookings();
+    } else {
+      console.error("User not logged in.");
+    }
+  });
 };
 
-// Initialize the dashboard
-initializeDashboard();
+// Initialize
+loadBookingCards();
+
+//--------------------- B O O K E D - S P O T S ---------------------
+const initializeBookedSpots = () => {
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      fetchBookedSpots();
+    } else {
+      console.error("User not logged in.");
+    }
+  });
+};
+
+// Initialize
+initializeBookedSpots();
+
+//--------------------- O W N E R - P A N E L ---------------------
+const openCalendarBtn = document.getElementById("open-calendar-btn");
+const availabilityList = document.getElementById("availability-list");
+const availabilityData = [];
+const parkingSpotForm = document.getElementById("parking-spot-form");
+
+// Initialize the parking spot form
+initializeParkingSpotForm(parkingSpotForm, availabilityData, availabilityList);
+
+// Initialize Flatpickr
+initializeFlatpickr(openCalendarBtn, availabilityList, availabilityData);
+
+//--------------------- P R O F I L E ---------------------
+// Get the form element from the DOM
+const userDetailsForm = document.getElementById("user-details-form");
+
+// Ensure the form element exists before calling the function
+if (userDetailsForm) {
+  handleProfileFormSubmission(userDetailsForm);
+} else {
+  console.error("User details form not found.");
+}
