@@ -1,9 +1,7 @@
 // Import Firebase modules
 import { auth, db } from "../firebase-config.js";
-import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-auth.js";
 import { doc, getDoc, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-firestore.js";
 import { createStarRating, saveRating } from "./rating-system.js";
-import { createCancelButton } from "./helpers.js";
 
 // DOM Element
 const bookedSpotsContainer = document.getElementById("booked-spots-cards");
@@ -144,9 +142,10 @@ const createBookedSpotCard = (booking) => {
 const renderStarRating = async (container, booking) => {
   const fromUserId = auth.currentUser?.uid;
   const bookingId = booking.id;
+  const toUserId = booking.userId;
 
-  if (!fromUserId || !bookingId) {
-    console.error("Invalid parameters for rendering star rating:", { fromUserId, bookingId });
+  if (!fromUserId || !toUserId || !bookingId) {
+    console.error("Invalid parameters for rendering star rating:", { fromUserId, toUserId, bookingId });
     return;
   }
 
@@ -161,7 +160,7 @@ const renderStarRating = async (container, booking) => {
     true, // Enable interactivity
     async (newRank) => {
       try {
-        await saveRating(fromUserId, booking.spotDetails.ownerId, "owner", bookingId, newRank);
+        await saveRating(fromUserId, toUserId, "owner", bookingId, newRank);
         alert("Rating saved successfully!");
 
         // Re-render the updated stars
