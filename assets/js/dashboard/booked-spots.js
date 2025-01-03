@@ -86,7 +86,7 @@ const fetchBookingRating = async (fromUserId, bookingId) => {
 
     if (!querySnapshot.empty) {
       const ratingData = querySnapshot.docs[0].data();
-      console.log("Fetched rating data:", ratingData); // Debug log
+      //onsole.log("Fetched rating data:", ratingData); // Debug log
       return ratingData.rating || 0; // Return rating or 0
     }
 
