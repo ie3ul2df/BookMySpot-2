@@ -6,6 +6,7 @@ import { fetchBookedSpots } from "./booked-spots.js";
 import { initializeFlatpickr, initializeParkingSpotForm } from "./owner-panel.js";
 import { loadParkingSpots } from "./parking-spots.js";
 import { displayAverageRating, fetchReceivedAverageRating } from "./rating-system.js";
+import { initializeAdminPanel } from "./admin-panel.js";
 
 //------------------------------------- Showing Tabs According to User Role
 onAuthStateChanged(auth, async (user) => {
@@ -62,6 +63,13 @@ const initializeAverageRating = () => {
 
 // Initialize the average rating display
 initializeAverageRating();
+
+//--------------------- A D M I N - P A N E L ---------------------
+
+// Initialize the admin panel when the admin page loads
+document.addEventListener("DOMContentLoaded", () => {
+  initializeAdminPanel();
+});
 
 //--------------------- M Y - B O O K I N G S ---------------------
 const loadBookingCards = () => {

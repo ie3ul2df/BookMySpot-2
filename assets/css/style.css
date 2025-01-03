@@ -284,3 +284,13 @@ img.card-img-top.rounded-circle.mx-auto.mt-4:hover {
 .star-rating .gray {
   color: lightgray;
 }
+
+.pagination-container {
+  text-align: center;
+  margin: 20px 0;
+}
+
+.card {
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
