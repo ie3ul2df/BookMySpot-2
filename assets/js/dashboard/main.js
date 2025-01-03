@@ -1,12 +1,13 @@
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-auth.js";
 import { auth } from "../firebase-config.js";
-import { fetchUserData, populateUserProfile, handleProfileFormSubmission, initializeAverageRank } from "./profile.js";
+import { fetchUserData, populateUserProfile, handleProfileFormSubmission } from "./profile.js";
 import { fetchUserBookings } from "./my-bookings.js";
 import { fetchBookedSpots } from "./booked-spots.js";
 import { initializeFlatpickr, initializeParkingSpotForm } from "./owner-panel.js";
 import { loadParkingSpots } from "./parking-spots.js";
+import { displayAverageRating, fetchReceivedAverageRating } from "./rating-system.js";
 
-//------------------------------------- Showing Tabs according to user role
+//------------------------------------- Showing Tabs According to User Role
 onAuthStateChanged(auth, async (user) => {
   if (user) {
     try {
@@ -44,10 +45,23 @@ onAuthStateChanged(auth, async (user) => {
   }
 });
 
-//---------------------------- Initialize the average rank display
+//---------------------------- Initialize the Average Rank Display
+const rankContainer = document.getElementById("average-rank-display");
 
-// Initialize
-initializeAverageRank();
+const initializeAverageRating = () => {
+  onAuthStateChanged(auth, async (user) => {
+    if (user) {
+      const userId = user.uid; // Logged-in user's ID
+      const averageRating = await fetchReceivedAverageRating(userId); // Fetch the average rating
+      displayAverageRating(rankContainer, averageRating); // Display it in the container
+    } else {
+      console.error("User not logged in.");
+    }
+  });
+};
+
+// Initialize the average rating display
+initializeAverageRating();
 
 //--------------------- M Y - B O O K I N G S ---------------------
 const loadBookingCards = () => {
@@ -90,10 +104,8 @@ initializeParkingSpotForm(parkingSpotForm, availabilityData, availabilityList);
 initializeFlatpickr(openCalendarBtn, availabilityList, availabilityData);
 
 //--------------------- P R O F I L E ---------------------
-// Get the form element from the DOM
 const userDetailsForm = document.getElementById("user-details-form");
 
-// Ensure the form element exists before calling the function
 if (userDetailsForm) {
   handleProfileFormSubmission(userDetailsForm);
 } else {

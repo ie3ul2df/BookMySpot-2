@@ -73,48 +73,47 @@ export const getGravatarUrl = (email) => {
 // --------------------------------------------------
 
 /**
- * Calculate the average rank for the currently logged-in user, regardless of their role.
+ * Fetch the average rank for the current user from the `ratings` collection.
  * @param {string} userId - The unique ID of the current user.
- * @param {string} role - The role of the user (e.g., "user" or "owner").
  */
-const calculateAverageRankForCurrentUser = async (userId, role) => {
+const calculateAverageRankForCurrentUser = async (userId) => {
   try {
-    const bookingsRef = collection(db, "bookings");
-    const querySnapshot = await getDocs(bookingsRef);
+    const ratingsRef = collection(db, "ratings");
+    const querySnapshot = await getDocs(query(ratingsRef, where("toUserId", "==", userId)));
 
     let totalRank = 0;
     let rankCount = 0;
 
-    for (const docSnapshot of querySnapshot.docs) {
-      const booking = docSnapshot.data();
-
-      // If the user is a regular user, calculate based on ownerRank
-      if (role === "user" && booking.ownerRank && booking.userId === userId) {
-        totalRank += booking.ownerRank;
-        rankCount++;
-      }
-
-      // If the user is an owner, calculate based on rank
-      if (role === "owner" && booking.rank && booking.spotId) {
-        const spotDoc = await getDoc(doc(db, "parking-spots", booking.spotId));
-        if (spotDoc.exists() && spotDoc.data().ownerId === userId) {
-          totalRank += booking.rank;
-          rankCount++;
-        }
-      }
-    }
+    querySnapshot.forEach((doc) => {
+      const rating = doc.data();
+      totalRank += rating.rating; // Sum up the ratings
+      rankCount++;
+    });
 
     const averageRank = rankCount > 0 ? (totalRank / rankCount).toFixed(2) : "No ratings yet";
-    displayAverageRank(averageRank); // Update the UI
+    displayAverageRank(averageRank); // Update the UI with the average rank
   } catch (error) {
-    console.error("Error calculating average rank for current user:", error);
+    console.error("Error calculating average rank:", error);
   }
 };
 
-/**
- * Display the average rank in the specified container.
- * @param {string|number} averageRank - The calculated average rank or a placeholder message.
- */
+// ---------------------------------------------
+
+export const initializeAverageRank = async () => {
+  onAuthStateChanged(auth, async (user) => {
+    if (user) {
+      const userId = user.uid;
+
+      // Calculate and display the average rank
+      await calculateAverageRankForCurrentUser(userId);
+    } else {
+      console.error("User is not logged in.");
+    }
+  });
+};
+
+// ---------------------------------------------
+
 export const displayAverageRank = (averageRank) => {
   const rankContainer = document.getElementById("average-rank-display");
 
@@ -124,30 +123,8 @@ export const displayAverageRank = (averageRank) => {
     if (averageRank === "No ratings yet") {
       rankContainer.innerHTML += `<p>${averageRank}</p>`;
     } else {
-      const starRating = createStarRating(parseFloat(averageRank)); // Ensure averageRank is a number
+      const starRating = createStarRating(parseFloat(averageRank), 5, false); // Ensure averageRank is a number
       rankContainer.appendChild(starRating);
     }
   }
-};
-
-export const initializeAverageRank = async () => {
-  onAuthStateChanged(auth, async (user) => {
-    if (user) {
-      const userId = user.uid;
-
-      // Fetch the user's role
-      const userDoc = await getDoc(doc(db, "users", userId));
-      if (userDoc.exists()) {
-        const userData = userDoc.data();
-        const role = userData.role; // e.g., "user" or "owner"
-
-        // Calculate and display the average rank
-        calculateAverageRankForCurrentUser(userId, role);
-      } else {
-        console.error("User data not found.");
-      }
-    } else {
-      console.error("User is not logged in.");
-    }
-  });
 };

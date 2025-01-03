@@ -1,6 +1,6 @@
 // Import Firebase modules
 import { db } from "../firebase-config.js";
-import { doc, getDoc, updateDoc, collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-firestore.js";
+import { doc, addDoc, collection, getDocs, query, where, updateDoc } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-firestore.js";
 
 /**
  * Fetch and display the average rank for a user.
@@ -10,80 +10,110 @@ import { doc, getDoc, updateDoc, collection, getDocs, query, where } from "https
  */
 export const fetchAverageRank = async (userId, role, container) => {
   try {
-    const bookingsRef = collection(db, "bookings");
-    const querySnapshot = await getDocs(bookingsRef);
+    const ratingsRef = collection(db, "ratings");
+    const q = query(ratingsRef, where("toUserId", "==", userId), where("role", "==", role));
+    const querySnapshot = await getDocs(q);
 
-    let totalRank = 0;
-    let rankCount = 0;
+    let totalRating = 0;
+    let ratingCount = 0;
 
-    for (const docSnapshot of querySnapshot.docs) {
-      const booking = docSnapshot.data();
+    querySnapshot.forEach((doc) => {
+      const rating = doc.data();
+      totalRating += rating.rating;
+      ratingCount++;
+    });
 
-      if (role === "user" && booking.ownerRank && booking.userId === userId) {
-        totalRank += booking.ownerRank;
-        rankCount++;
-      }
-
-      if (role === "owner" && booking.rank && booking.spotId) {
-        const spotDoc = await getDoc(doc(db, "parking-spots", booking.spotId));
-        if (spotDoc.exists() && spotDoc.data().ownerId === userId) {
-          totalRank += booking.rank;
-          rankCount++;
-        }
-      }
-    }
-
-    const averageRank = rankCount > 0 ? (totalRank / rankCount).toFixed(2) : "No ratings yet";
-    displayAverageRank(averageRank, container);
+    const averageRating = ratingCount > 0 ? (totalRating / ratingCount).toFixed(2) : "No ratings yet";
+    displayAverageRating(container, averageRating);
   } catch (error) {
     console.error("Error fetching average rank:", error);
-    displayAverageRank("Error", container);
+    displayAverageRating(container, "Error");
   }
 };
 
 /**
  * Display the average rank in a container.
- * @param {string|number} averageRank - The calculated average rank or a placeholder message.
  * @param {HTMLElement} container - The container to display the rank.
+ * @param {string|number} averageRating - The calculated average rating or a placeholder message.
  */
-const displayAverageRank = (averageRank, container) => {
-  if (container) {
-    container.innerHTML = `<h5>Average Rank</h5>`;
+export const displayAverageRating = (container, averageRating) => {
+  if (!container) return;
 
-    if (averageRank === "No ratings yet" || averageRank === "Error") {
-      container.innerHTML += `<p>${averageRank}</p>`;
-    } else {
-      const starRating = createStarRating(parseFloat(averageRank), 5, false);
-      container.appendChild(starRating);
-    }
+  container.innerHTML = `<h5>Average Rating</h5>`;
+  if (averageRating === "No ratings yet" || averageRating === "Error") {
+    container.innerHTML += `<p>${averageRating}</p>`;
+  } else {
+    const starRating = createStarRating(parseFloat(averageRating), 5, false);
+    container.appendChild(starRating);
   }
 };
 
 /**
- * Save a user's rank for a booking.
- * @param {string} bookingId - The unique ID of the booking.
- * @param {number} rank - The rank to save (1-5).
+ * Save or update a rating in the `ratings` collection.
+ * @param {string} fromUserId - ID of the user giving the rating.
+ * @param {string} toUserId - ID of the user being rated.
+ * @param {string} role - Role of the user being rated ("owner" or "user").
+ * @param {string} bookingId - ID of the associated booking.
+ * @param {number} rating - The rating given (1-5).
  */
-export const saveUserRank = async (bookingId, rank) => {
+export const saveRating = async (fromUserId, toUserId, role, bookingId, rating) => {
+  if (!fromUserId || !toUserId || !role || !bookingId || !rating) {
+    console.error("Missing required data for saving rating:", { fromUserId, toUserId, role, bookingId, rating });
+    return;
+  }
+
   try {
-    const bookingRef = doc(db, "bookings", bookingId);
-    await updateDoc(bookingRef, { rank });
-    alert("Rank saved successfully!");
+    const ratingsRef = collection(db, "ratings");
+
+    // Query to find an existing rating for this booking and user pair
+    const existingRatingQuery = query(
+      ratingsRef,
+      where("fromUserId", "==", fromUserId),
+      where("toUserId", "==", toUserId),
+      where("bookingId", "==", bookingId)
+    );
+
+    const querySnapshot = await getDocs(existingRatingQuery);
+
+    if (!querySnapshot.empty) {
+      // If a record exists, update it
+      const ratingDocId = querySnapshot.docs[0].id; // Get the ID of the existing rating document
+      const ratingDocRef = doc(db, "ratings", ratingDocId);
+
+      await updateDoc(ratingDocRef, {
+        rating,
+        timestamp: new Date().toISOString(),
+      });
+
+      console.log("Rating updated successfully!");
+    } else {
+      // If no record exists, create a new one
+      await addDoc(ratingsRef, {
+        fromUserId,
+        toUserId,
+        role,
+        bookingId,
+        rating,
+        timestamp: new Date().toISOString(),
+      });
+
+      console.log("Rating saved successfully!");
+    }
   } catch (error) {
-    console.error("Error saving rank:", error);
-    alert("Failed to save rank. Please try again.");
+    console.error("Error saving or updating rating:", error);
+    alert("Failed to save or update rating. Please try again.");
   }
 };
 
 /**
  * Create a star rating element.
- * @param {number} averageRank - The average rank to display.
+ * @param {number} averageRating - The average rating to display.
  * @param {number} maxRating - The maximum number of stars.
  * @param {boolean} interactive - Whether the stars are clickable.
- * @param {function} [saveCallback] - Callback for saving the rank (if interactive).
+ * @param {function} [saveCallback] - Callback for saving the rating (if interactive).
  * @returns {HTMLElement} - The star rating element.
  */
-export const createStarRating = (averageRank, maxRating = 5, interactive = false, saveCallback = null) => {
+export const createStarRating = (averageRating, maxRating = 5, interactive = false, saveCallback = null) => {
   const container = document.createElement("div");
   container.classList.add("star-rating", "d-block");
 
@@ -92,11 +122,11 @@ export const createStarRating = (averageRank, maxRating = 5, interactive = false
     star.classList.add("fa", "fa-star", "star");
 
     // Full stars
-    if (i <= Math.floor(averageRank)) {
+    if (i <= Math.floor(averageRating)) {
       star.classList.add("gold");
     }
     // Half stars
-    else if (i === Math.ceil(averageRank) && averageRank % 1 >= 0.5) {
+    else if (i === Math.ceil(averageRating) && averageRating % 1 >= 0.5) {
       star.classList.add("gold", "fa-star-half-alt");
     }
     // Empty stars
@@ -104,10 +134,9 @@ export const createStarRating = (averageRank, maxRating = 5, interactive = false
       star.classList.add("gray");
     }
 
-    // Add interactivity if enabled
     if (interactive) {
       star.addEventListener("mouseover", () => highlightStars(container, i));
-      star.addEventListener("mouseout", () => resetStars(container, averageRank));
+      star.addEventListener("mouseout", () => resetStars(container, averageRating));
       star.addEventListener("click", () => {
         selectStars(container, i);
         if (saveCallback) saveCallback(i); // Save the selected rank
@@ -146,14 +175,24 @@ const selectStars = (container, rating) => {
   });
 };
 
-// Save rank to Firestore
-export async function saveOwnerRank(bookingId, rank) {
+export const fetchReceivedAverageRating = async (userId) => {
   try {
-    const bookingRef = doc(db, "bookings", bookingId);
-    await updateDoc(bookingRef, { ownerRank: rank });
-    alert("Rating saved successfully!");
+    const ratingsRef = collection(db, "ratings");
+    const q = query(ratingsRef, where("toUserId", "==", userId)); // Ratings received by the user
+    const querySnapshot = await getDocs(q);
+
+    let totalRating = 0;
+    let ratingCount = 0;
+
+    querySnapshot.forEach((doc) => {
+      const rating = doc.data();
+      totalRating += rating.rating;
+      ratingCount++;
+    });
+
+    return ratingCount > 0 ? (totalRating / ratingCount).toFixed(2) : "No ratings yet";
   } catch (error) {
-    console.error("Error saving rating:", error);
-    alert("Error saving rating. Please try again later.");
+    console.error("Error fetching received average rating:", error);
+    return "Error";
   }
-}
+};

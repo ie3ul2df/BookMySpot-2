@@ -1,8 +1,8 @@
 // Import Firebase modules
 import { auth, db } from "../firebase-config.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-auth.js";
-import { doc, getDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-firestore.js";
-import { createStarRating, saveUserRank } from "./rating-system.js";
+import { doc, getDoc, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-firestore.js";
+import { createStarRating, saveRating } from "./rating-system.js";
 import { createCancelButton } from "./helpers.js";
 
 // DOM Element
@@ -20,16 +20,11 @@ const displayMessage = (container, message, className = "") => {
   }
 };
 
-/**
- * Fetch booked spots for the current owner.
- */
 export const fetchBookedSpots = async () => {
-  displayMessage(bookedSpotsContainer, "Loading booked spots...", "text-info");
-
   try {
     const user = auth.currentUser;
     if (!user) {
-      displayMessage(bookedSpotsContainer, "Please log in to view booked spots.", "text-danger");
+      console.error("User not logged in.");
       return;
     }
 
@@ -37,26 +32,68 @@ export const fetchBookedSpots = async () => {
     const bookingsRef = collection(db, "bookings");
     const querySnapshot = await getDocs(bookingsRef);
 
-    const bookedSpots = [];
-    for (const bookingDoc of querySnapshot.docs) {
-      const booking = bookingDoc.data();
-      const spotDoc = await getDoc(doc(db, "parking-spots", booking.spotId));
-      const userDoc = await getDoc(doc(db, "users", booking.userId));
+    const bookedSpots = await Promise.all(
+      querySnapshot.docs.map(async (bookingDoc) => {
+        const booking = bookingDoc.data();
+        const bookingId = bookingDoc.id;
+        const fromUserId = booking.userId;
 
-      if (spotDoc.exists() && userDoc.exists() && spotDoc.data().ownerId === ownerId) {
-        bookedSpots.push({
-          id: bookingDoc.id,
-          ...booking,
-          spotDetails: spotDoc.data(),
-          userDetails: userDoc.data(),
-        });
-      }
-    }
+        if (!fromUserId || !bookingId) {
+          console.error("Skipping invalid booking data:", { fromUserId, bookingId });
+          return null; // Skip invalid bookings
+        }
 
-    displayBookedSpots(bookedSpots);
+        const spotDoc = await getDoc(doc(db, "parking-spots", booking.spotId));
+        const userDoc = await getDoc(doc(db, "users", booking.userId));
+        const rating = await fetchBookingRating(fromUserId, bookingId); // Fetch existing rating
+
+        if (spotDoc.exists() && userDoc.exists() && spotDoc.data().ownerId === ownerId) {
+          return {
+            id: bookingId,
+            ...booking,
+            spotDetails: spotDoc.data(),
+            userDetails: userDoc.data(),
+            ownerRating: rating || 0, // Default to 0 if no rating exists
+          };
+        }
+
+        return null;
+      })
+    );
+
+    displayBookedSpots(bookedSpots.filter((spot) => spot)); // Filter out null values
   } catch (error) {
     console.error("Error fetching booked spots:", error);
-    displayMessage(bookedSpotsContainer, "Error loading booked spots. Please try again later.", "text-danger");
+  }
+};
+
+/**
+ * Fetch the existing rating for a booking.
+ * @param {string} userId - The user giving the rating.
+ * @param {string} bookingId - The booking ID.
+ * @returns {Promise<number|null>} - The existing rating, or null if none exists.
+ */
+const fetchBookingRating = async (fromUserId, bookingId) => {
+  if (!fromUserId || !bookingId) {
+    console.error("Invalid parameters for fetching booking rating:", { fromUserId, bookingId });
+    return 0; // Default rating if parameters are invalid
+  }
+
+  try {
+    const ratingsRef = collection(db, "ratings");
+    const q = query(ratingsRef, where("fromUserId", "==", fromUserId), where("bookingId", "==", bookingId));
+    const querySnapshot = await getDocs(q);
+
+    if (!querySnapshot.empty) {
+      const ratingData = querySnapshot.docs[0].data();
+      console.log("Fetched rating data:", ratingData); // Debug log
+      return ratingData.rating || 0; // Return rating or 0
+    }
+
+    return 0; // No rating found
+  } catch (error) {
+    console.error("Error fetching booking rating:", error);
+    return 0;
   }
 };
 
@@ -64,51 +101,14 @@ export const fetchBookedSpots = async () => {
  * Display booked spots as cards.
  * @param {Array} bookedSpots - List of booked spots.
  */
-function displayBookedSpots(bookedSpots) {
+const displayBookedSpots = (bookedSpots) => {
   bookedSpotsContainer.innerHTML = ""; // Clear existing cards
 
   bookedSpots.forEach((booking) => {
-    const card = document.createElement("div");
-    card.className = "col-md-4";
-
-    // Enable interactivity for ranking the owner
-    const starRating = createStarRating(
-      booking.rank || 0, // Existing rank or default to 0
-      5,
-      true, // Enable interactivity
-      async (newRank) => {
-        try {
-          await saveUserRank(booking.id, newRank); // Save the rank
-          alert("Rank saved successfully!");
-          booking.rank = newRank; // Update the local rank value
-        } catch (error) {
-          console.error("Error saving rank:", error);
-          alert("Failed to save the rank. Please try again.");
-        }
-      }
-    );
-
-    card.innerHTML = `
-      <div class="card mb-4">
-        <div class="card-body">
-          <h5 class="card-title">Spot: ${booking.spotDetails.address}</h5>
-          <p><strong>User:</strong> ${booking.userDetails.email}</p>
-          <p><strong>Date:</strong> ${booking.selectedDateTimeRange}</p>
-          <div class="mb-2">Rate this owner:</div>
-        </div>
-      </div>
-    `;
-
-    // Append the star rating to the card
-    card.querySelector(".card-body").appendChild(starRating);
-
-    // Add cancel booking button
-    const cancelButton = createCancelButton(booking.id);
-    card.querySelector(".card-body").appendChild(cancelButton);
-
+    const card = createBookedSpotCard(booking);
     bookedSpotsContainer.appendChild(card);
   });
-}
+};
 
 /**
  * Create a booked spot card.
@@ -120,14 +120,58 @@ const createBookedSpotCard = (booking) => {
   card.className = "col-md-4";
 
   card.innerHTML = `
-    <div class="card mb-3">
+    <div class="card mb-4">
       <div class="card-body">
         <h5 class="card-title">Spot: ${booking.spotDetails.address}</h5>
-        <p class="card-text"><strong>User:</strong> ${booking.userDetails.email}</p>
-        <p class="card-text"><strong>Date:</strong> ${booking.selectedDateTimeRange}</p>
+        <p><strong>User:</strong> ${booking.userDetails.email}</p>
+        <p><strong>Date:</strong> ${booking.selectedDateTimeRange || "N/A"}</p>
+        <div id="star-rating-container-${booking.id}" class="mb-2">Rate this owner:</div>
       </div>
     </div>
   `;
 
+  const starRatingContainer = card.querySelector(`#star-rating-container-${booking.id}`);
+  renderStarRating(starRatingContainer, booking);
+
   return card;
+};
+
+/**
+ * Render star rating component inside a given container.
+ * @param {HTMLElement} container - The container to render the star rating in.
+ * @param {Object} booking - Booking data.
+ */
+const renderStarRating = async (container, booking) => {
+  const fromUserId = auth.currentUser?.uid;
+  const bookingId = booking.id;
+
+  if (!fromUserId || !bookingId) {
+    console.error("Invalid parameters for rendering star rating:", { fromUserId, bookingId });
+    return;
+  }
+
+  // Fetch the updated rating from the database
+  const updatedRating = await fetchBookingRating(fromUserId, bookingId);
+
+  container.innerHTML = ""; // Clear existing stars
+
+  const starRating = createStarRating(
+    updatedRating, // Use the updated rating
+    5, // Maximum stars
+    true, // Enable interactivity
+    async (newRank) => {
+      try {
+        await saveRating(fromUserId, booking.spotDetails.ownerId, "owner", bookingId, newRank);
+        alert("Rating saved successfully!");
+
+        // Re-render the updated stars
+        await renderStarRating(container, booking);
+      } catch (error) {
+        console.error("Error saving rank:", error);
+        alert("Failed to save the rank. Please try again.");
+      }
+    }
+  );
+
+  container.appendChild(starRating);
 };
