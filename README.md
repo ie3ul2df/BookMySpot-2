@@ -22,6 +22,16 @@ BookMySpot is a web application designed to connect drivers in need of parking s
 - Enhance user experience with a responsive and accessible design.
 - Foster trust between users through a rating and review system.
 
+## Development Process and Functionalities
+
+In order to guarantee responsive design and interactive features, the project implementation relies on hands-on tutorials from W3Schools covering HTML, CSS, Bootstrap, and JavaScript topics (W3Schools, 2025).
+According to Kumar (2018), responsive web design, or RWD, uses media queries, fluid grids, and flexible pictures to make sure that websites work effectively on a variety of devices and improve user experience.
+
+### User Authentication
+
+There are two links under each form that let users switch between login, register and forgot password forms.
+![1 User Authentication code](assets/img/developement/user-authentication/1-user-authentication-code.png)
+
 ## Future Features
 
 - **Admin Panel**:

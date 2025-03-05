@@ -1,279 +1,291 @@
 <!DOCTYPE html>
 <html data-bs-theme="light" lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no" />
-    <meta name="author" content="BookMySpot Team" />
-    <meta name="keywords" content="login, register, BookMySpot account, user authentication, parking account, secure login, user registration" />
-    <meta
-      name="description"
-      content="Login or register for a BookMySpot account to book parking spaces or manage your parking spots. Create an account and get started today."
-    />
 
-    <title>BookMySpot | Login/Register</title>
-    <link rel="icon" type="image/x-icon" href="assets/img/fav.ico" />
-    <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:400,700&amp;display=swap" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Kaushan+Script&amp;display=swap" />
-    <link rel="stylesheet" href="assets/fonts/fontawesome-all.min.css" />
-    <link rel="stylesheet" href="assets/fonts/font-awesome.min.css" />
-    <link rel="stylesheet" href="assets/fonts/fontawesome5-overrides.min.css" />
-    <link rel="stylesheet" href="assets/css/bs-theme-overrides.css" />
-    <link rel="stylesheet" href="assets/css/style.css" />
-  </head>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no" />
+  <meta name="author" content="BookMySpot Team" />
+  <meta name="keywords"
+    content="login, register, BookMySpot account, user authentication, parking account, secure login, user registration" />
+  <meta name="description"
+    content="Login or register for a BookMySpot account to book parking spaces or manage your parking spots. Create an account and get started today." />
 
-  <body id="login-page-body" data-bs-spy="scroll" data-bs-target="#mainNav" data-bs-offset="54" class="d-flex flex-column min-vh-100">
-    <header>
-      <!-- //_____________________________________ Navbar _____________________________________// -->
-      <nav class="navbar navbar-expand-lg fixed-top bg-dark navbar-dark" id="mainNav" aria-label="Main Navigation">
-        <div class="container">
-          <a class="navbar-brand" href="index.html" aria-label="Go to Home Page">
-            <img src="assets/img/logo2.png" alt="BookMySpot site logo" class="site-logo-style" />
-          </a>
-          <button
-            data-bs-toggle="collapse"
-            data-bs-target="#navbarResponsive"
-            class="navbar-toggler"
-            type="button"
-            aria-controls="navbarResponsive"
-            aria-expanded="false"
-            aria-label="Toggle navigation menu"
-          >
-            <i class="fa fa-bars"></i>
-          </button>
-          <div class="collapse navbar-collapse" id="navbarResponsive">
-            <ul class="navbar-nav ms-auto text-uppercase">
-              <!-- Home dropdown -->
-              <li class="nav-item dropdown">
-                <a
-                  class="nav-link dropdown-toggle"
-                  href="index.html"
-                  id="homeDropdown"
-                  role="button"
-                  aria-expanded="false"
-                  aria-haspopup="true"
-                  aria-label="Home Section Menu"
-                >
-                  Home
-                </a>
-                <ul class="dropdown-menu bg-dark" aria-labelledby="homeDropdown">
-                  <li><a class="dropdown-item text-light" href="index.html#features" aria-label="Features Section">Features</a></li>
-                  <li><a class="dropdown-item text-light" href="index.html#how-to-use" aria-label="How It Works Section">How It Works?</a></li>
-                  <li><a class="dropdown-item text-light" href="index.html#testimonials" aria-label="Testimonials Section">Testimonials</a></li>
-                  <li><a class="dropdown-item text-light" href="index.html#team" aria-label="Team Section">Team</a></li>
-                  <li><a class="dropdown-item text-light" href="index.html#contact" aria-label="Contact Section">Contact</a></li>
-                </ul>
-              </li>
-              <!-- Other nav items -->
-              <li class="nav-item"><a class="nav-link" href="about-us.html" aria-label="About Us Page">About-us</a></li>
-              <li class="nav-item"><a class="nav-link" href="privacy.html" aria-label="Privacy and Policies Page">Privacy and Policies</a></li>
-              <li class="nav-item" id="auth-link">
-                <a class="nav-link" href="login_register.html" aria-label="Privacy and Policies Page">Login / Register</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" id="logout" href="#" aria-label="Log out">Logout</a>
-              </li>
-            </ul>
-          </div>
+  <title>BookMySpot | Login/Register</title>
+  <link rel="icon" type="image/x-icon" href="assets/img/fav.ico" />
+  <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:400,700&amp;display=swap" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Kaushan+Script&amp;display=swap" />
+  <link rel="stylesheet" href="assets/fonts/fontawesome-all.min.css" />
+  <link rel="stylesheet" href="assets/fonts/font-awesome.min.css" />
+  <link rel="stylesheet" href="assets/fonts/fontawesome5-overrides.min.css" />
+  <link rel="stylesheet" href="assets/css/bs-theme-overrides.css" />
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+
+<body id="login-page-body" data-bs-spy="scroll" data-bs-target="#mainNav" data-bs-offset="54"
+  class="d-flex flex-column min-vh-100">
+  <header>
+    <!-- //_____________________________________ Navbar _____________________________________// -->
+    <nav class="navbar navbar-expand-lg fixed-top bg-dark navbar-dark" id="mainNav" aria-label="Main Navigation">
+      <div class="container">
+        <a class="navbar-brand" href="index.html" aria-label="Go to Home Page">
+          <img src="assets/img/logo2.png" alt="BookMySpot site logo" class="site-logo-style" />
+        </a>
+        <button data-bs-toggle="collapse" data-bs-target="#navbarResponsive" class="navbar-toggler" type="button"
+          aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation menu">
+          <i class="fa fa-bars"></i>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+          <ul class="navbar-nav ms-auto text-uppercase">
+            <!-- Home dropdown -->
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="index.html" id="homeDropdown" role="button"
+                aria-expanded="false" aria-haspopup="true" aria-label="Home Section Menu">
+                Home
+              </a>
+              <ul class="dropdown-menu bg-dark" aria-labelledby="homeDropdown">
+                <li><a class="dropdown-item text-light" href="index.html#features"
+                    aria-label="Features Section">Features</a></li>
+                <li><a class="dropdown-item text-light" href="index.html#how-to-use"
+                    aria-label="How It Works Section">How It Works?</a></li>
+                <li><a class="dropdown-item text-light" href="index.html#testimonials"
+                    aria-label="Testimonials Section">Testimonials</a></li>
+                <li><a class="dropdown-item text-light" href="index.html#team" aria-label="Team Section">Team</a></li>
+                <li><a class="dropdown-item text-light" href="index.html#contact"
+                    aria-label="Contact Section">Contact</a></li>
+              </ul>
+            </li>
+            <!-- Other nav items -->
+            <li class="nav-item"><a class="nav-link" href="about-us.html" aria-label="About Us Page">About-us</a></li>
+            <li class="nav-item"><a class="nav-link" href="privacy.html" aria-label="Privacy and Policies Page">Privacy
+                and Policies</a></li>
+            <li class="nav-item" id="auth-link">
+              <a class="nav-link" href="login_register.html" aria-label="Privacy and Policies Page">Login / Register</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" id="logout" href="#" aria-label="Log out">Logout</a>
+            </li>
+          </ul>
         </div>
-      </nav>
-    </header>
+      </div>
+    </nav>
+  </header>
 
-    <main class="flex-grow-1">
-      <!--_____________________________________ Login Form _____________________________________-->
-      <div id="site-login-form" class="position-relative py-4 py-xl-5 aj-mt-150">
-        <div class="container">
-          <div class="row mb-5">
-            <div class="col-md-8 col-xl-6 text-center mx-auto">
-              <h2 class="theme-dark-color">Log in</h2>
-              <p class="w-lg-50 theme-dark-color">Enter your username and password in the form below</p>
-              <p class="fw-bold">Sample user email and passwords</p>
-              <p>admin@mail.com</p>
+  <main class="flex-grow-1">
+    <!--_____________________________________ Login Form _____________________________________-->
+    <div id="site-login-form" class="position-relative py-4 py-xl-5 aj-mt-150">
+      <div class="container">
+        <div class="row mb-5">
+          <div class="col-md-8 col-xl-6 text-center mx-auto">
+            <h2 class="theme-dark-color">Log in</h2>
+            <p class="w-lg-50 theme-dark-color">Enter your username and password in the form below</p>
+            <p class="fw-bold">Sample user email and passwords</p>
+            <!-- <p>admin@mail.com</p>
               <p>Admin123</p>
               <p>------------------</p>
               <p>owner@mail.com</p>
               <p>Owner123</p>
               <p>------------------</p>
               <p>user@mail.com</p>
-              <p>User123</p>
-            </div>
+              <p>User123</p> -->
           </div>
-          <div class="row d-flex justify-content-center">
-            <div class="col-md-6 col-xl-4">
-              <div class="card mb-5">
-                <div class="card-body d-flex flex-column align-items-center">
-                  <div class="bs-icon-xl bs-icon-circle bs-icon-primary bs-icon my-4">
-                    <svg class="bi bi-person" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16">
-                      <path
-                        d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0m4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4m-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664z"
-                      ></path>
-                    </svg>
-                  </div>
-                  <form class="text-center" id="loginForm">
-                    <input type="hidden" name="formType" value="login" />
-                    <div class="mb-3"><input class="form-control" type="email" name="email" placeholder="Email" /></div>
-                    <div class="mb-3"><input class="form-control" type="password" name="password" placeholder="Password" /></div>
-                    <div class="mb-3">
-                      <button class="btn btn-primary d-block w-100 theme-dark-color login-register-btns" type="submit">Login</button>
-                    </div>
-                    <p class="my-3">
-                      <a href="#" id="show-register-form" class="theme-dark-color" aria-label="Show the registration form">Register Form</a> /
-                      <a href="#" id="show-forgot-password-form-login" class="theme-dark-color" aria-label="Show the forgot password form"
-                        >Forgot Password Form</a
-                      >
-                    </p>
-                  </form>
+        </div>
+        <div class="row d-flex justify-content-center">
+          <div class="col-md-6 col-xl-4">
+            <div class="card mb-5">
+              <div class="card-body d-flex flex-column align-items-center">
+                <div class="bs-icon-xl bs-icon-circle bs-icon-primary bs-icon my-4">
+                  <svg class="bi bi-person" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em"
+                    fill="currentColor" viewBox="0 0 16 16">
+                    <path
+                      d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0m4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4m-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664z">
+                    </path>
+                  </svg>
                 </div>
+                <form class="text-center" id="loginForm">
+                  <input type="hidden" name="formType" value="login" />
+                  <div class="mb-3"><input class="form-control" type="email" name="email" placeholder="Email" /></div>
+                  <div class="mb-3"><input class="form-control" type="password" name="password"
+                      placeholder="Password" /></div>
+                  <div class="mb-3">
+                    <button class="btn btn-primary d-block w-100 theme-dark-color login-register-btns"
+                      type="submit">Login</button>
+                  </div>
+                  <p class="my-3">
+                    <a href="#" id="show-register-form" class="theme-dark-color"
+                      aria-label="Show the registration form">Register Form</a> /
+                    <a href="#" id="show-forgot-password-form-login" class="theme-dark-color"
+                      aria-label="Show the forgot password form">Forgot Password Form</a>
+                  </p>
+                </form>
               </div>
             </div>
           </div>
         </div>
       </div>
+    </div>
 
-      <!--_____________________________________ Register Form _____________________________________-->
-      <section id="site-register-form" class="position-relative py-4 py-xl-5 d-none aj-mt-150">
-        <div class="container">
-          <div class="row mb-5">
-            <div class="col-md-8 col-xl-6 text-center mx-auto">
-              <h2 class="theme-dark-color">Register</h2>
-              <p class="w-lg-50 theme-dark-color">Create your account to enjoy all the benefits of our service. It only takes a few minutes!</p>
-            </div>
-          </div>
-          <div class="row d-flex justify-content-center">
-            <div class="col-md-6">
-              <div class="card mb-5">
-                <div class="card-body d-flex flex-column align-items-center">
-                  <div class="bs-icon-xl bs-icon-circle bs-icon-primary bs-icon my-4">
-                    <svg class="bi bi-person" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16">
-                      <path
-                        d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0m4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4m-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664z"
-                      ></path>
-                    </svg>
-                  </div>
-                  <form class="text-center" id="registerForm">
-                    <input type="hidden" name="formType" value="register" />
-                    <div class="mb-3"><input class="form-control" type="email" name="email" placeholder="Email" required /></div>
-                    <div class="mb-3"><input class="form-control" type="password" name="password" placeholder="Password" required /></div>
-                    <div class="mb-3"><input class="form-control" type="text" name="address" placeholder="Address" /></div>
-                    <div class="mb-3"><input class="form-control" type="text" name="address2" placeholder="Address 2" /></div>
-                    <div class="row mb-3">
-                      <div class="col-md-8"><input class="form-control" type="text" name="city" placeholder="City" /></div>
-                      <div class="col-md-4"><input class="form-control" type="text" name="zip" placeholder="Zip" /></div>
-                    </div>
-
-                    <!-- Role Selection -->
-                    <div class="mb-3 d-flex">
-                      <label class="theme-dark-color fw-bold me-4" for="role">Select Role:</label>
-                      <div class="form-check">
-                        <input class="form-check-input" type="radio" name="role" id="role-user" value="user" required checked />
-                        <label class="form-check-label me-2" for="role-user">User</label>
-                      </div>
-                      <div class="form-check">
-                        <input class="form-check-input" type="radio" name="role" id="role-owner" value="owner" required />
-                        <label class="form-check-label" for="role-owner">Owner</label>
-                      </div>
-                    </div>
-
-                    <div class="mb-3">
-                      <div class="form-check d-flex">
-                        <input class="form-check-input me-2" type="checkbox" id="gridCheck" required />
-                        <label class="form-check-label" for="gridCheck">I agree to the terms and conditions</label>
-                      </div>
-                    </div>
-                    <button type="submit" class="btn btn-primary d-block w-100 theme-dark-color login-register-btns">Sign Up</button>
-                    <p class="my-3">
-                      <a href="#" id="show-login-form" class="theme-dark-color" aria-label="Show the login form">Login Form</a> /
-                      <a href="#" id="show-forgot-password-form-register" class="theme-dark-color" aria-label="Show the forgot password form"
-                        >Forgot Password Form</a
-                      >
-                    </p>
-                  </form>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- //_____________________________________ Forgot Password Form_____________________________________// -->
-
-      <section id="site-forgot-password-form" class="position-relative py-4 py-xl-5 d-none aj-mt-150">
-        <div class="container">
-          <div class="row mb-5">
-            <div class="col-md-8 col-xl-6 text-center mx-auto">
-              <h2 class="theme-dark-color">Forgot Password</h2>
-              <p class="w-lg-50 theme-dark-color">Enter your email, the recovery password will be sent to you.</p>
-            </div>
-          </div>
-          <div class="row d-flex justify-content-center">
-            <div class="col-md-6 col-xl-4">
-              <div class="card mb-5">
-                <div class="card-body d-flex flex-column align-items-center">
-                  <div class="bs-icon-xl bs-icon-circle bs-icon-primary bs-icon my-4">
-                    <svg class="bi bi-person" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16">
-                      <path
-                        d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0m4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4m-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664z"
-                      ></path>
-                    </svg>
-                  </div>
-                  <form class="text-center" id="forgotPasswordForm">
-                    <input type="hidden" name="formType" value="forgotPassword" />
-                    <div class="mb-3">
-                      <input class="form-control" type="email" name="email" placeholder="Email" />
-                    </div>
-                    <div class="mb-3">
-                      <button class="btn btn-primary d-block w-100 theme-dark-color login-register-btns" type="submit">Email Me My Recovery Password</button>
-                    </div>
-                    <p class="text-muted">
-                      <a href="#" id="show-login-form" class="theme-dark-color" aria-label="Show the login form">Login Form</a> /
-                      <a href="#" id="show-register-form" class="theme-dark-color" aria-label="Show the register form">Register Form</a>
-                    </p>
-                  </form>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-    </main>
-    <!-- Footer -->
-    <footer class="footer-bg" aria-labelledby="footer-heading">
+    <!--_____________________________________ Register Form _____________________________________-->
+    <section id="site-register-form" class="position-relative py-4 py-xl-5 d-none aj-mt-150">
       <div class="container">
-        <div class="row">
-          <div class="col-md-4">
-            <span id="footer-heading" class="copyright">Copyright&nbsp;© BookMySpot 2024</span>
+        <div class="row mb-5">
+          <div class="col-md-8 col-xl-6 text-center mx-auto">
+            <h2 class="theme-dark-color">Register</h2>
+            <p class="w-lg-50 theme-dark-color">Create your account to enjoy all the benefits of our service. It only
+              takes a few minutes!</p>
           </div>
-          <div class="col-md-4">
-            <ul class="list-inline social-buttons">
-              <li class="list-inline-item">
-                <a href="https://x.com/" target="_blank" aria-label="Follow us on Twitter"><i class="fa fa-twitter"></i></a>
-              </li>
-              <li class="list-inline-item">
-                <a href="https://www.facebook.com/" target="_blank" aria-label="Follow us on Facebook"><i class="fa fa-facebook"></i></a>
-              </li>
-              <li class="list-inline-item">
-                <a href="https://www.linkedin.com/" target="_blank" aria-label="Connect with us on LinkedIn"><i class="fa fa-linkedin"></i></a>
-              </li>
-            </ul>
-          </div>
-          <div class="col-md-4">
-            <ul class="list-inline quicklinks">
-              <li class="list-inline-item">
-                <a href="privacy.html" aria-label="Read our Privacy Policy">Privacy Policy</a>
-              </li>
-              <li class="list-inline-item">
-                <a href="about-us.html" aria-label="Learn more about us">About Us</a>
-              </li>
-            </ul>
+        </div>
+        <div class="row d-flex justify-content-center">
+          <div class="col-md-6">
+            <div class="card mb-5">
+              <div class="card-body d-flex flex-column align-items-center">
+                <div class="bs-icon-xl bs-icon-circle bs-icon-primary bs-icon my-4">
+                  <svg class="bi bi-person" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em"
+                    fill="currentColor" viewBox="0 0 16 16">
+                    <path
+                      d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0m4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4m-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664z">
+                    </path>
+                  </svg>
+                </div>
+                <form class="text-center" id="registerForm">
+                  <input type="hidden" name="formType" value="register" />
+                  <div class="mb-3"><input class="form-control" type="email" name="email" placeholder="Email"
+                      required /></div>
+                  <div class="mb-3"><input class="form-control" type="password" name="password" placeholder="Password"
+                      required /></div>
+                  <div class="mb-3"><input class="form-control" type="text" name="address" placeholder="Address" />
+                  </div>
+                  <div class="mb-3"><input class="form-control" type="text" name="address2" placeholder="Address 2" />
+                  </div>
+                  <div class="row mb-3">
+                    <div class="col-md-8"><input class="form-control" type="text" name="city" placeholder="City" />
+                    </div>
+                    <div class="col-md-4"><input class="form-control" type="text" name="zip" placeholder="Zip" /></div>
+                  </div>
+
+                  <!-- Role Selection -->
+                  <div class="mb-3 d-flex">
+                    <label class="theme-dark-color fw-bold me-4" for="role">Select Role:</label>
+                    <div class="form-check">
+                      <input class="form-check-input" type="radio" name="role" id="role-user" value="user" required
+                        checked />
+                      <label class="form-check-label me-2" for="role-user">User</label>
+                    </div>
+                    <div class="form-check">
+                      <input class="form-check-input" type="radio" name="role" id="role-owner" value="owner" required />
+                      <label class="form-check-label" for="role-owner">Owner</label>
+                    </div>
+                  </div>
+
+                  <div class="mb-3">
+                    <div class="form-check d-flex">
+                      <input class="form-check-input me-2" type="checkbox" id="gridCheck" required />
+                      <label class="form-check-label" for="gridCheck">I agree to the terms and conditions</label>
+                    </div>
+                  </div>
+                  <button type="submit" class="btn btn-primary d-block w-100 theme-dark-color login-register-btns">Sign
+                    Up</button>
+                  <p class="my-3">
+                    <a href="#" id="show-login-form" class="theme-dark-color" aria-label="Show the login form">Login
+                      Form</a> /
+                    <a href="#" id="show-forgot-password-form-register" class="theme-dark-color"
+                      aria-label="Show the forgot password form">Forgot Password Form</a>
+                  </p>
+                </form>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-    </footer>
+    </section>
 
-    <script src="assets/js/agency.js"></script>
-    <script src="assets/js/login-register-forgotPass-form-switch.js"></script>
-    <script type="module" src="assets/js/firebase-config.js"></script>
-    <script type="module" src="assets/js/firebase-queries.js"></script>
-    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
-  </body>
+    <!-- //_____________________________________ Forgot Password Form_____________________________________// -->
+
+    <section id="site-forgot-password-form" class="position-relative py-4 py-xl-5 d-none aj-mt-150">
+      <div class="container">
+        <div class="row mb-5">
+          <div class="col-md-8 col-xl-6 text-center mx-auto">
+            <h2 class="theme-dark-color">Forgot Password</h2>
+            <p class="w-lg-50 theme-dark-color">Enter your email, the recovery password will be sent to you.</p>
+          </div>
+        </div>
+        <div class="row d-flex justify-content-center">
+          <div class="col-md-6 col-xl-4">
+            <div class="card mb-5">
+              <div class="card-body d-flex flex-column align-items-center">
+                <div class="bs-icon-xl bs-icon-circle bs-icon-primary bs-icon my-4">
+                  <svg class="bi bi-person" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em"
+                    fill="currentColor" viewBox="0 0 16 16">
+                    <path
+                      d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0m4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4m-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664z">
+                    </path>
+                  </svg>
+                </div>
+                <form class="text-center" id="forgotPasswordForm">
+                  <input type="hidden" name="formType" value="forgotPassword" />
+                  <div class="mb-3">
+                    <input class="form-control" type="email" name="email" placeholder="Email" />
+                  </div>
+                  <div class="mb-3">
+                    <button class="btn btn-primary d-block w-100 theme-dark-color login-register-btns"
+                      type="submit">Email Me My Recovery Password</button>
+                  </div>
+                  <p class="text-muted">
+                    <a href="#" id="show-login-form" class="theme-dark-color" aria-label="Show the login form">Login
+                      Form</a> /
+                    <a href="#" id="show-register-form" class="theme-dark-color"
+                      aria-label="Show the register form">Register Form</a>
+                  </p>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+  <!-- Footer -->
+  <footer class="footer-bg" aria-labelledby="footer-heading">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-4">
+          <span id="footer-heading" class="copyright">Copyright&nbsp;© BookMySpot 2024</span>
+        </div>
+        <div class="col-md-4">
+          <ul class="list-inline social-buttons">
+            <li class="list-inline-item">
+              <a href="https://x.com/" target="_blank" aria-label="Follow us on Twitter"><i
+                  class="fa fa-twitter"></i></a>
+            </li>
+            <li class="list-inline-item">
+              <a href="https://www.facebook.com/" target="_blank" aria-label="Follow us on Facebook"><i
+                  class="fa fa-facebook"></i></a>
+            </li>
+            <li class="list-inline-item">
+              <a href="https://www.linkedin.com/" target="_blank" aria-label="Connect with us on LinkedIn"><i
+                  class="fa fa-linkedin"></i></a>
+            </li>
+          </ul>
+        </div>
+        <div class="col-md-4">
+          <ul class="list-inline quicklinks">
+            <li class="list-inline-item">
+              <a href="privacy.html" aria-label="Read our Privacy Policy">Privacy Policy</a>
+            </li>
+            <li class="list-inline-item">
+              <a href="about-us.html" aria-label="Learn more about us">About Us</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="assets/js/agency.js"></script>
+  <script src="assets/js/login-register-forgotPass-form-switch.js"></script>
+  <script type="module" src="assets/js/firebase-config.js"></script>
+  <script type="module" src="assets/js/firebase-queries.js"></script>
+  <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+</body>
+
 </html>
