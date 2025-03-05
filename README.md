@@ -695,45 +695,61 @@ The deployed version of this project can be accessed at the following URL:
 ### Tutorials & Documentation
 
 - Code Institute for frontend tutorials: [Codeinstitute](https://codeinstitute.net/)
-- W3Schools for HTML, CSS, and JavaScript tutorials: [W3Schools](https://www.w3schools.com)
+- W3Schools for HTML, CSS, JavaScript, and Bootstrap tutorials: [W3Schools](https://www.w3schools.com)
 - MDN Web Docs for JavaScript and web standards: [MDN Web Docs](https://developer.mozilla.org/)
-- Chatgpt for refinements and brainstormings [Chatgpt](https://chatgpt.com)
+- ChatGPT for refinements and brainstorming: [ChatGPT](https://chatgpt.com)
+- Firebase official documentation for backend implementation: [Firebase Docs](https://firebase.google.com/docs)
+- GitHub Pages documentation for deployment: [GitHub Docs](https://pages.github.com/)
+- Balsamiq for wireframing guidance: [Balsamiq](https://balsamiq.com/)
+- Google Lighthouse for performance and accessibility testing: [Lighthouse](https://developers.google.com/web/tools/lighthouse)
+- W3C Markup Validation Service for HTML validation: [W3C Validator](https://validator.w3.org/)
+- W3C CSS Validator for checking stylesheets: [W3C CSS Validator](https://jigsaw.w3.org/css-validator/)
+- JSHint for JavaScript code quality checks: [JSHint](https://jshint.com/)
 
 ### Libraries & Frameworks
 
 - Bootstrap 5.3 for responsive design: [Bootstrap](https://getbootstrap.com/)
 - Font Awesome 5 for icons: [Font Awesome](https://fontawesome.com/)
 - jQuery for JavaScript library: [jQuery](https://jquery.com/)
+- Flatpickr for interactive date selection: [Flatpickr](https://flatpickr.js.org/)
 
 ### Images & Media
 
 - Images sourced from Pexels: [Pexels](https://pexels.com)
 - Hero Image from Adobe Firefly: [Adobe Firefly](https://firefly.adobe.com/)
 - Icons by Font Awesome: [Font Awesome](https://fontawesome.com/)
-- Login / Register page bg gif animation: [Pinterest](https://uk.pinterest.com/)
+- Login/Register page background GIF from Pinterest: [Pinterest](https://uk.pinterest.com/)
+- Color scheme inspiration from Coolors: [Coolors](https://coolors.co/)
+- Logo design inspiration from LogoMakr: [LogoMakr](https://logomakr.com/)
 
 ### Code Snippets
 
-- Code snippets for form validation from Stack Overflow: [Stack Overflow](https://stackoverflow.com/)
-- Solution for async/await in JavaScript from GitHub Gists: [GitHub Gists](https://gist.github.com/)
+- Form validation solutions from Stack Overflow: [Stack Overflow](https://stackoverflow.com/)
+- Async/Await handling in JavaScript from GitHub Gists: [GitHub Gists](https://gist.github.com/)
+- Responsive web design concepts from academic sources, including Kumar (2018) and Bhanarkar et al. (2023).
 
 ### Future Open Source Contributions
 
 - Express.js for server-side framework: [Express.js](https://expressjs.com/)
-- Node.js for backend platform: [Node.js](https://nodejs.org/)
+- Node.js for backend development: [Node.js](https://nodejs.org/)
+- MongoDB for NoSQL database integration: [MongoDB](https://www.mongodb.com/)
 
 ### Font Resources
 
-- Google Fonts for font selection: [Google Fonts](https://fonts.google.com/)
+- Google Fonts for typography selection: [Google Fonts](https://fonts.google.com/)
+- Gravatar for user profile avatars: [Gravatar](https://docs.gravatar.com/)
 
 ### Third-Party APIs
 
-- Google Maps API for map features, will be added in the next releases: [Google Maps API](https://developers.google.com/maps)
-- Stripe API for payments, will be added in the next releases: [Stripe API](https://stripe.com/docs/api)
+- Google Maps API for map-based search functionality: [Google Maps API](https://developers.google.com/maps)
+- Stripe API for payment processing: [Stripe API](https://stripe.com/docs/api)
 
 ### Licenses
 
 - MIT License for open-source libraries: [MIT License](https://opensource.org/licenses/MIT)
+- Bootstrap documentation: [Bootstrap Docs](https://getbootstrap.com/docs/5.3/getting-started/introduction/)
+
+This project is built upon industry standards, academic research, and best practices for modern web development and smart parking solutions.
 
 ## Contact
 
