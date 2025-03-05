@@ -45,6 +45,47 @@ Firebase Authentication provides various methods for implementing secure user lo
 ![Firebase Email/Password Authentication](assets/img/developement/user-authentication/6-user-authentication.png)
 ![Firebase Social Media Authentication](assets/img/developement/user-authentication/7-user-authentication.png)
 
+### Booking System
+
+- **Search and Browse Parking Spots**:  
+  Any user can search for available parking spots using the search box provided on the homepage hero section. The displayed results are based on location and availability, fetched in real-time from Firestore.
+  ![Search Box on Homepage](assets/img/developement/booking-system/1-booking-system-search-box-hero-home-page.png)  
+  ![Booking System Code Implementation](assets/img/developement/booking-system/2-booking-system-code.png)
+
+- **Real-Time Booking**:  
+  Real-time parking availability is monitored and updated dynamically, allowing drivers to efficiently find open spots. This is achieved through wireless networks that relay occupancy data.
+  After selecting an available parking spot, users are redirected to a dynamic booking page that fetches relevant data based on the URL parameters.
+  Authenticated users (drivers) can book parking spots, whereas unauthenticated users can browse available spots but must sign in to complete a booking.
+  ![Dynamic Booking Page](assets/img/developement/booking-system/3-booking-system-dynamic-booking-page.png)
+
+- **Booking Confirmation**:  
+  Users can view their booked parking spots along with details such as time, location, and owner information in the "My Bookings" tab on their dashboard.
+  ![Booking Confirmation Card on Dashboard](assets/img/developement/booking-system/4-booking-system-booking-card-on-dashboard.png)
+
+### Rating System
+
+I had to construct a table in the database named "rating" in order to retrieve and alter data to create a rating system.
+BookMySpot utilizes Firebase services, including database and authentication features, in accordance with Google's approved guidelines.
+
+**Two-Way Rating System**:  
+Users and owners can rate each other after a completed booking.
+
+- Users can rate owners using the star ranking system available in the "My Bookings" tab at the bottom of each booking card:
+  ![User Rating on Booking Card](assets/img/developement/rating-system/1-rating-system-booking-card.png)
+- Owners can rate drivers from their dashboard in the "Booked Spot" tab at the bottom of each booking card:
+  ![Owner Rating on Booked Spot Card](assets/img/developement/rating-system/2-rating-system-booked-spot-card.png)
+  ![Database Code for Rating System](assets/img/developement/rating-system/3-rating-system-code.png)
+
+**Star Rating UI Component**:  
+A dynamic star rating system is implemented to collect user feedback through an interactive interface.
+![Star Rating UI Code](assets/img/developement/rating-system/4-rating-system-code.png)
+![Star Rating Implementation](assets/img/developement/rating-system/5-rating-system-code.png)
+
+**Average Rating Calculation**:  
+The app calculates and displays the average rating for both users and owners, which is visible on their dashboard above their profile images.
+![User's Average Rating Display](assets/img/developement/rating-system/6-rating-system-user-average-rank.png)
+![Code for Average Rating Calculation](assets/img/developement/rating-system/7-rating-system-code.png)
+
 ## Future Features
 
 - **Admin Panel**:
