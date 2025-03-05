@@ -29,8 +29,20 @@ According to Kumar (2018), responsive web design, or RWD, uses media queries, fl
 
 ### User Authentication
 
-There are two links under each form that let users switch between login, register and forgot password forms.
-![1 User Authentication code](assets/img/developement/user-authentication/1-user-authentication-code.png)
+There are two links under each form that let users switch between login, register, and forgot password forms.
+![User Authentication Form Switching](assets/img/developement/user-authentication/1-user-authentication-code.png)
+
+Separate functionalities for Drivers, Owners, and Admins. Each user selects a role on the register form as shown below.
+![Login Form UI](assets/img/developement/user-authentication/2-user-authentication-login.png)
+![Register Form UI](assets/img/developement/user-authentication/3-user-authentication-register.png)
+![Forgot Password Form UI](assets/img/developement/user-authentication/4-user-authentication-forgot-password.png)
+
+Firebase handles the user authentication process:
+![Firebase Authentication Overview](assets/img/developement/user-authentication/5-user-authentication.png)
+
+Firebase Authentication provides various methods for implementing secure user login functions, including email/password authentication, social media logins, and anonymous authentication. These methods help developers manage user accounts effectively within Android applications.
+![Firebase Email/Password Authentication](assets/img/developement/user-authentication/6-user-authentication.png)
+![Firebase Social Media Authentication](assets/img/developement/user-authentication/7-user-authentication.png)
 
 ## Future Features
 
