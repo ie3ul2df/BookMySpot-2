@@ -33,6 +33,7 @@ There are two links under each form that let users switch between login, registe
 ![User Authentication Form Switching](assets/img/developement/user-authentication/1-user-authentication-code.png)
 
 Separate functionalities for Drivers, Owners, and Admins. Each user selects a role on the register form as shown below.
+
 ![Login Form UI](assets/img/developement/user-authentication/2-user-authentication-login.png)
 ![Register Form UI](assets/img/developement/user-authentication/3-user-authentication-register.png)
 ![Forgot Password Form UI](assets/img/developement/user-authentication/4-user-authentication-forgot-password.png)
