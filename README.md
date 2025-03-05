@@ -86,6 +86,79 @@ The app calculates and displays the average rating for both users and owners, wh
 ![User's Average Rating Display](assets/img/developement/rating-system/6-rating-system-user-average-rank.png)
 ![Code for Average Rating Calculation](assets/img/developement/rating-system/7-rating-system-code.png)
 
+### Database Design
+
+The main database used by BookMySpot is Firebase Firestore, designed to store and manage user, parking spot, booking, and rating information efficiently. It follows NoSQL best practices to ensure scalability, security, and consistency.
+
+**Key Entities and Relationships:**
+
+- **Users**: Stores registered user details, including role (Driver or Owner), email, phone number, address, and zip code.
+  ![Firebase Users Table Structure](assets/img/developement/database-design/1-database-design-firebase-structure-users-table.png)
+
+- **Parking Spots**: Stores information about available parking spaces, linked to owner ID, postcode, price per hour, and availability.
+  ![Firebase Parking Spots Table Structure](assets/img/developement/database-design/2-database-design-parking-spot-table.png)
+
+- **Bookings**: Tracks parking reservations, storing selected date-time range, spot ID, and user ID.
+  ![Firebase Bookings Table Structure](assets/img/developement/database-design/3-database-design-bookings-table.png)
+
+- **Ratings**: Enables users to rate each other after bookings, storing booking ID, fromUserId, toUserId, rating, role, and timestamp.
+  ![Firebase Ratings Table Structure](assets/img/developement/database-design/4-database-design-rating-table.png)
+
+The database security rules are configured following industry best practices, ensuring safe data access and transactions.
+
+### Dashboard and Personas
+
+BookMySpot uses **Gravatar** for managing user profile images, linking avatars to email addresses for consistency across the platform.
+
+**HTML Implementation:**
+![Gravatar HTML Integration](assets/img/developement/dashboard/1-dashboard-code.png)
+
+**JavaScript Implementation:**
+![Gravatar JavaScript Integration](assets/img/developement/dashboard/2-dashboard-code.png)
+
+#### User Dashboard
+
+After logging in, users can access their dashboard to manage their profile and bookings.
+
+- **Profile Details:** Displays user information and allows updates.
+  ![User Dashboard Interface](assets/img/developement/dashboard/3-dashboard-user-dashboard.png)
+  ![User Dashboard Code](assets/img/developement/dashboard/4-dashboard-code.png)
+
+- **Bookings Management:** Lists all bookings in card format.
+  ![User Bookings List](assets/img/developement/dashboard/5-dashboard-code.png)
+
+- **Cancellation Feature:** Users can cancel bookings, which removes them from the database.
+  ![Booking Cancellation Code](assets/img/developement/dashboard/6-dashboard-code.png)
+
+#### Owner Dashboard
+
+Owners have additional functionalities compared to drivers, including:
+
+- **Owner Panel:** Allows listing and managing parking spots.
+  ![Owner Dashboard Interface](assets/img/developement/dashboard/7-dashboard-owner-dashboard.png)
+  ![Role-Based Dashboard Code](assets/img/developement/dashboard/8-dashboard-code.png)
+
+- **Spot Management:** Owners can add parking spots by specifying address, postcode, and pricing.
+  ![Owner Panel Spot Addition](assets/img/developement/dashboard/9-dashboard-owner-panel.png)
+  ![Owner Panel Code](assets/img/developement/dashboard/10-dashboard-code.png)
+
+- **Saved Parking Records:** A table displays all the owner's parking spots stored in the database.
+  ![Owner Parking Records](assets/img/developement/dashboard/11-dashboard-code.png)
+
+- **Availability Management:** Users can set available dates and times using **Flatpickr**, an interactive date-time picker.
+  ![Flatpickr UI for Availability](assets/img/developement/dashboard/12-dashboard-flatpicker.png)
+  ![Flatpickr Implementation Code](assets/img/developement/dashboard/13-dashboard-code.png)
+
+#### Admin Dashboard
+
+The Admin Dashboard provides additional controls, including:
+
+- **Viewing All Bookings and Ratings:** Admins can access detailed records of users, owners, and their transactions.
+  ![Admin Booking Cards Panel](assets/img/developement/dashboard/14-dashboard-admin-panel-booking-cards.png)
+
+- **Load More Button:** Allows dynamic data loading, improving panel usability.
+  ![Load More Feature Code](assets/img/developement/dashboard/15-dashboard-code.png)
+
 ## Future Features
 
 - **Admin Panel**:
